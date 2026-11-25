@@ -9,7 +9,7 @@ import Security
 // MARK: – HTTP Method
 final class NetworkClient: NSObject, NetworkRequesting {
 
-    private let logger = Logger(subsystem: "com.parkspot.app", category: "network")
+    let logger = Logger(subsystem: "com.parkspot.app", category: "network")
 
     private let baseURL: URL
     private let keychain: KeychainServiceProtocol
