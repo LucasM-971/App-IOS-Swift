@@ -3109,26 +3109,6 @@ private struct MapPin: Identifiable {
     let kind: MapPinKind
 }
 
-private enum GuidanceRouteGuardrails {
-    static let maximumWalkingRouteDistanceMeters: CLLocationDistance = 50_000
-
-    static func isValid(_ coordinate: CLLocationCoordinate2D) -> Bool {
-        coordinate.latitude.isFinite
-            && coordinate.longitude.isFinite
-            && abs(coordinate.latitude) <= 90
-            && abs(coordinate.longitude) <= 180
-    }
-
-    static func straightLineDistance(
-        from start: CLLocationCoordinate2D,
-        to end: CLLocationCoordinate2D
-    ) -> CLLocationDistance? {
-        guard isValid(start), isValid(end) else { return nil }
-        return CLLocation(latitude: start.latitude, longitude: start.longitude)
-            .distance(from: CLLocation(latitude: end.latitude, longitude: end.longitude))
-    }
-}
-
 private enum MapPinKind {
     case car
     case user
