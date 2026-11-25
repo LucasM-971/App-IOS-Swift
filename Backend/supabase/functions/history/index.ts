@@ -44,7 +44,8 @@ const allowedEventTypes = new Set([
 
 function isMissingRelationError(message: string | undefined): boolean {
   const normalized = (message ?? "").toLowerCase();
-  return normalized.includes("relation") && normalized.includes("does not exist");
+  return normalized.includes("relation") &&
+    normalized.includes("does not exist");
 }
 
 function normalizeMetadata(value: unknown): Record<string, string> | null {
@@ -52,7 +53,9 @@ function normalizeMetadata(value: unknown): Record<string, string> | null {
     return null;
   }
 
-  const sanitized = Object.entries(value as Record<string, unknown>).reduce<Record<string, string>>((result, [key, entry]) => {
+  const sanitized = Object.entries(value as Record<string, unknown>).reduce<
+    Record<string, string>
+  >((result, [key, entry]) => {
     const trimmedKey = key.trim();
     const normalizedValue = typeof entry === "string" ? entry.trim() : "";
     if (!trimmedKey || !normalizedValue) {
@@ -65,7 +68,11 @@ function normalizeMetadata(value: unknown): Record<string, string> | null {
   return Object.keys(sanitized).length > 0 ? sanitized : null;
 }
 
-function parseDate(value: unknown, _fieldName: string, required = false): Date | null {
+function parseDate(
+  value: unknown,
+  _fieldName: string,
+  required = false,
+): Date | null {
   if (value === null || value === undefined || value === "") {
     return required ? new Date(Number.NaN) : null;
   }
@@ -87,7 +94,10 @@ function pickString(value: Record<string, unknown>, ...keys: string[]): string {
   return "";
 }
 
-function pickNullableString(value: Record<string, unknown>, ...keys: string[]): string | null {
+function pickNullableString(
+  value: Record<string, unknown>,
+  ...keys: string[]
+): string | null {
   for (const key of keys) {
     const candidate = value[key];
     if (candidate === null) {
@@ -101,7 +111,10 @@ function pickNullableString(value: Record<string, unknown>, ...keys: string[]): 
   return null;
 }
 
-function pickNumber(value: Record<string, unknown>, ...keys: string[]): number | null {
+function pickNumber(
+  value: Record<string, unknown>,
+  ...keys: string[]
+): number | null {
   for (const key of keys) {
     const candidate = value[key];
     if (typeof candidate === "number" && Number.isFinite(candidate)) {
@@ -146,7 +159,11 @@ Deno.serve(async (req: Request) => {
       windowSeconds: 60,
     });
     if (!rate.allowed) {
-      return errorResponse(`Trop de requêtes. Réessaie dans ${rate.retryAfterSeconds}s.`, 429, headers);
+      return errorResponse(
+        `Trop de requêtes. Réessaie dans ${rate.retryAfterSeconds}s.`,
+        429,
+        headers,
+      );
     }
 
     const service = createServiceClient();
@@ -165,7 +182,11 @@ Deno.serve(async (req: Request) => {
         const normalizedEvent = event as Record<string, unknown>;
         const eventId = pickString(normalizedEvent, "id");
         const eventUserId = pickString(normalizedEvent, "userId", "user_id");
-        const eventType = pickString(normalizedEvent, "eventType", "event_type");
+        const eventType = pickString(
+          normalizedEvent,
+          "eventType",
+          "event_type",
+        );
         const latitude = pickNumber(normalizedEvent, "latitude");
         const longitude = pickNumber(normalizedEvent, "longitude");
 
@@ -179,7 +200,11 @@ Deno.serve(async (req: Request) => {
           latitude === null ||
           longitude === null
         ) {
-          return errorResponse("Coordonnées d'historique invalides.", 400, headers);
+          return errorResponse(
+            "Coordonnées d'historique invalides.",
+            400,
+            headers,
+          );
         }
         if (!allowedEventTypes.has(eventType)) {
           return errorResponse("Type d'historique invalide.", 400, headers);
@@ -214,7 +239,11 @@ Deno.serve(async (req: Request) => {
           user_id: userId,
           latitude,
           longitude,
-          address_name: pickNullableString(normalizedEvent, "addressName", "address_name"),
+          address_name: pickNullableString(
+            normalizedEvent,
+            "addressName",
+            "address_name",
+          ),
           event_type: eventType,
           created_at: createdAt.toISOString(),
           synced_at: (syncedAt ?? new Date()).toISOString(),
@@ -230,9 +259,17 @@ Deno.serve(async (req: Request) => {
 
       if (error) {
         if (isMissingRelationError(error.message)) {
-          return errorResponse("Migration manquante: table parking_history_events absente.", 500, headers);
+          return errorResponse(
+            "Migration manquante: table parking_history_events absente.",
+            500,
+            headers,
+          );
         }
-        return errorResponse(error.message ?? "Impossible de sauvegarder l'historique.", 500, headers);
+        return errorResponse(
+          error.message ?? "Impossible de sauvegarder l'historique.",
+          500,
+          headers,
+        );
       }
 
       return jsonResponse((data ?? []).map(mapHistoryRow), { headers });
@@ -243,14 +280,19 @@ Deno.serve(async (req: Request) => {
       const normalizedBody = (body ?? {}) as Record<string, unknown>;
       const requestedUserId = pickString(normalizedBody, "userId", "user_id");
       const ids = Array.isArray(body?.ids)
-        ? body.ids.map((value) => typeof value === "string" ? value.trim() : "").filter(Boolean)
+        ? body.ids.map((value) => typeof value === "string" ? value.trim() : "")
+          .filter(Boolean)
         : [];
 
       if (requestedUserId !== userId) {
         return errorResponse("Forbidden", 403, headers);
       }
       if (ids.some((value) => !isUuid(value))) {
-        return errorResponse("Identifiants d'historique invalides.", 400, headers);
+        return errorResponse(
+          "Identifiants d'historique invalides.",
+          400,
+          headers,
+        );
       }
       if (ids.length === 0) {
         return jsonResponse({ ok: true, deleted: 0 }, { headers });
@@ -264,17 +306,32 @@ Deno.serve(async (req: Request) => {
 
       if (error) {
         if (isMissingRelationError(error.message)) {
-          return errorResponse("Migration manquante: table parking_history_events absente.", 500, headers);
+          return errorResponse(
+            "Migration manquante: table parking_history_events absente.",
+            500,
+            headers,
+          );
         }
-        return errorResponse(error.message ?? "Impossible de supprimer l'historique.", 500, headers);
+        return errorResponse(
+          error.message ?? "Impossible de supprimer l'historique.",
+          500,
+          headers,
+        );
       }
 
       return jsonResponse({ ok: true, deleted: ids.length }, { headers });
     }
 
     if (req.method === "GET" && path.includes("/events")) {
-      const limit = clamp(Number(url.searchParams.get("limit") ?? "20") || 20, 1, 100);
-      const offset = Math.max(0, Number(url.searchParams.get("offset") ?? "0") || 0);
+      const limit = clamp(
+        Number(url.searchParams.get("limit") ?? "20") || 20,
+        1,
+        100,
+      );
+      const offset = Math.max(
+        0,
+        Number(url.searchParams.get("offset") ?? "0") || 0,
+      );
       const includeDeleted = url.searchParams.get("includeDeleted") === "1";
 
       let query = service
@@ -292,9 +349,17 @@ Deno.serve(async (req: Request) => {
 
       if (error) {
         if (isMissingRelationError(error.message)) {
-          return errorResponse("Migration manquante: table parking_history_events absente.", 500, headers);
+          return errorResponse(
+            "Migration manquante: table parking_history_events absente.",
+            500,
+            headers,
+          );
         }
-        return errorResponse(error.message ?? "Impossible de lire l'historique.", 500, headers);
+        return errorResponse(
+          error.message ?? "Impossible de lire l'historique.",
+          500,
+          headers,
+        );
       }
 
       return jsonResponse((data ?? []).map(mapHistoryRow), { headers });
@@ -316,9 +381,17 @@ Deno.serve(async (req: Request) => {
 
       if (error) {
         if (isMissingRelationError(error.message)) {
-          return errorResponse("Migration manquante: table parking_history_events absente.", 500, headers);
+          return errorResponse(
+            "Migration manquante: table parking_history_events absente.",
+            500,
+            headers,
+          );
         }
-        return errorResponse(error.message ?? "Impossible de supprimer l'historique.", 500, headers);
+        return errorResponse(
+          error.message ?? "Impossible de supprimer l'historique.",
+          500,
+          headers,
+        );
       }
 
       return jsonResponse({ ok: true }, { headers });

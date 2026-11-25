@@ -18,8 +18,8 @@ export function isParkingSchemaCacheMiss(message?: string | null): boolean {
     return false;
   }
 
-  return normalized.includes("schema cache")
-    || (normalized.includes("relation") && normalized.includes("does not exist"));
+  return normalized.includes("schema cache") ||
+    (normalized.includes("relation") && normalized.includes("does not exist"));
 }
 
 export async function ensureParkingSchema(): Promise<void> {
@@ -96,10 +96,16 @@ export async function ensureParkingSchema(): Promise<void> {
         execute function public.set_updated_at();
       `);
 
-      await sql.unsafe(`alter table public.parking_sessions enable row level security;`);
-      await sql.unsafe(`alter table public.parking_sessions force row level security;`);
+      await sql.unsafe(
+        `alter table public.parking_sessions enable row level security;`,
+      );
+      await sql.unsafe(
+        `alter table public.parking_sessions force row level security;`,
+      );
 
-      await sql.unsafe(`drop policy if exists parking_sessions_select_own on public.parking_sessions;`);
+      await sql.unsafe(
+        `drop policy if exists parking_sessions_select_own on public.parking_sessions;`,
+      );
       await sql.unsafe(`
         create policy parking_sessions_select_own
         on public.parking_sessions
@@ -108,7 +114,9 @@ export async function ensureParkingSchema(): Promise<void> {
         using (auth.uid() = user_id);
       `);
 
-      await sql.unsafe(`drop policy if exists parking_sessions_insert_own on public.parking_sessions;`);
+      await sql.unsafe(
+        `drop policy if exists parking_sessions_insert_own on public.parking_sessions;`,
+      );
       await sql.unsafe(`
         create policy parking_sessions_insert_own
         on public.parking_sessions
@@ -117,7 +125,9 @@ export async function ensureParkingSchema(): Promise<void> {
         with check (auth.uid() = user_id);
       `);
 
-      await sql.unsafe(`drop policy if exists parking_sessions_update_own on public.parking_sessions;`);
+      await sql.unsafe(
+        `drop policy if exists parking_sessions_update_own on public.parking_sessions;`,
+      );
       await sql.unsafe(`
         create policy parking_sessions_update_own
         on public.parking_sessions
@@ -127,7 +137,9 @@ export async function ensureParkingSchema(): Promise<void> {
         with check (auth.uid() = user_id);
       `);
 
-      await sql.unsafe(`drop policy if exists parking_sessions_delete_own on public.parking_sessions;`);
+      await sql.unsafe(
+        `drop policy if exists parking_sessions_delete_own on public.parking_sessions;`,
+      );
       await sql.unsafe(`
         create policy parking_sessions_delete_own
         on public.parking_sessions
@@ -136,8 +148,12 @@ export async function ensureParkingSchema(): Promise<void> {
         using (auth.uid() = user_id);
       `);
 
-      await sql.unsafe(`revoke all on table public.parking_sessions from anon, authenticated;`);
-      await sql.unsafe(`grant select, insert, update, delete on table public.parking_sessions to authenticated;`);
+      await sql.unsafe(
+        `revoke all on table public.parking_sessions from anon, authenticated;`,
+      );
+      await sql.unsafe(
+        `grant select, insert, update, delete on table public.parking_sessions to authenticated;`,
+      );
 
       await sql`select pg_notify('pgrst', 'reload schema')`;
     } finally {

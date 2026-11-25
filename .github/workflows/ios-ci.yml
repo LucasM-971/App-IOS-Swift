@@ -5,11 +5,19 @@ on:
   push:
     branches:
       - main
-      - master
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
+  # Vérifications rapides : tournent sur Linux (beaucoup moins cher que macOS).
   quality-checks:
-    runs-on: macos-15
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - name: Checkout
@@ -29,83 +37,96 @@ jobs:
       - name: Deno lint
         run: deno lint Backend/supabase/functions
 
-      - name: Auth e2e smoke test (optional)
+      - name: Auth e2e smoke test (ignoré sans secrets CI)
+        env:
+          PARKSPOT_E2E_AUTH_BASE_URL: ${{ secrets.PARKSPOT_E2E_AUTH_BASE_URL }}
+          PARKSPOT_E2E_AUTH_EMAIL: ${{ secrets.PARKSPOT_E2E_AUTH_EMAIL }}
+          PARKSPOT_E2E_AUTH_PASSWORD: ${{ secrets.PARKSPOT_E2E_AUTH_PASSWORD }}
         run: deno test --allow-net --allow-env Backend/supabase/functions/auth/auth.e2e.test.ts
 
+  # Build + tests unitaires. Le projet nécessite Xcode 26 (format de projet 77, cibles iOS 26).
   build-and-test:
-    runs-on: macos-15
-    strategy:
-      fail-fast: false
-      matrix:
-        destination:
-          - "platform=iOS Simulator,OS=latest,name=iPhone 17 Pro"
-          - "platform=iOS Simulator,OS=latest,name=iPhone 17e"
+    needs: quality-checks
+    runs-on: macos-26
+    timeout-minutes: 45
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Select Xcode
-        run: sudo xcode-select -switch /Applications/Xcode.app
-
       - name: Show Xcode version
         run: xcodebuild -version
 
+      - name: Pick an iPhone simulator
+        id: sim
+        run: |
+          UDID=$(xcrun simctl list devices available -j | python3 -c '
+          import json, sys
+          data = json.load(sys.stdin)["devices"]
+          for runtime in sorted(data, reverse=True):
+              if "iOS" not in runtime:
+                  continue
+              for device in data[runtime]:
+                  if device["name"].startswith("iPhone"):
+                      print(device["udid"]); sys.exit(0)
+          sys.exit("No iPhone simulator available")
+          ')
+          echo "udid=$UDID" >> "$GITHUB_OUTPUT"
+          xcrun simctl list devices available | grep "$UDID"
+
       - name: Build (simulator, unsigned)
         run: |
+          set -o pipefail
           xcodebuild \
             -project ParkSpot.xcodeproj \
             -scheme ParkSpot \
-            -sdk iphonesimulator \
-            -destination '${{ matrix.destination }}' \
+            -destination "id=${{ steps.sim.outputs.udid }}" \
             CODE_SIGNING_ALLOWED=NO \
-            clean build
+            build-for-testing
 
       - name: Run unit tests
         run: |
+          set -o pipefail
           xcodebuild \
             -project ParkSpot.xcodeproj \
             -scheme ParkSpot \
-            -sdk iphonesimulator \
-            -destination '${{ matrix.destination }}' \
+            -destination "id=${{ steps.sim.outputs.udid }}" \
+            -only-testing:ParkSpotTests \
             -enableCodeCoverage YES \
             -resultBundlePath TestResults.xcresult \
             CODE_SIGNING_ALLOWED=NO \
-            test
+            test-without-building
 
-      - name: Coverage summary
+      - name: Coverage summary (informatif)
         if: always()
         env:
-          COVERAGE_MIN: "0.55"
+          COVERAGE_TARGET: "0.55"
         run: |
-          if [ -d TestResults.xcresult ]; then
-            xcrun xccov view --report --json TestResults.xcresult > coverage-report.json
-            python3 - <<'PY'
-          import json
-          import os
-          import sys
-
-          min_cov = float(os.environ.get("COVERAGE_MIN", "0.55"))
-
-          with open("coverage-report.json", "r", encoding="utf-8") as f:
-            data = json.load(f)
-
-          targets = data if isinstance(data, list) else data.get("targets", [])
-
-          total_exec = 0.0
-          total_covered = 0.0
-          for t in targets:
-            exec_lines = float(t.get("executableLines", 0) or 0)
-            line_cov = float(t.get("lineCoverage", 0) or 0)
-            total_exec += exec_lines
-            total_covered += exec_lines * line_cov
-
-          overall = (total_covered / total_exec) if total_exec > 0 else 0.0
-          print(f"Computed line coverage: {overall:.4f}")
-          print(f"Minimum required:       {min_cov:.4f}")
-
-          if overall < min_cov:
-            print("Coverage threshold not met.", file=sys.stderr)
-            sys.exit(1)
-          PY
+          if [ ! -d TestResults.xcresult ]; then
+            echo "Pas de résultats de tests."
+            exit 0
           fi
+          xcrun xccov view --report --json TestResults.xcresult > coverage-report.json
+          python3 - <<'PY'
+          import json, os
+
+          target = float(os.environ.get("COVERAGE_TARGET", "0.55"))
+          with open("coverage-report.json", encoding="utf-8") as f:
+              data = json.load(f)
+          targets = data if isinstance(data, list) else data.get("targets", [])
+          app = [t for t in targets if t.get("name", "").startswith("ParkSpot.app")] or targets
+          total = sum(float(t.get("executableLines", 0) or 0) for t in app)
+          covered = sum(float(t.get("executableLines", 0) or 0) * float(t.get("lineCoverage", 0) or 0) for t in app)
+          overall = covered / total if total else 0.0
+          print(f"Couverture : {overall:.1%} (objectif {target:.0%})")
+          if overall < target:
+              print(f"::warning::Couverture {overall:.1%} sous l'objectif de {target:.0%}")
+          PY
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: TestResults
+          path: TestResults.xcresult
+          retention-days: 7

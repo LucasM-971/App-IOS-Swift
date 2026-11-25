@@ -1,7 +1,10 @@
 /// <reference path="../_shared/deno-shim.d.ts" />
 
 import { corsHeaders, handleCors } from "../_shared/cors.ts";
-import { ensureFrequentZoneSchema, isFrequentZoneSchemaMismatch } from "../_shared/frequentZoneSchema.ts";
+import {
+  ensureFrequentZoneSchema,
+  isFrequentZoneSchemaMismatch,
+} from "../_shared/frequentZoneSchema.ts";
 import { checkRateLimit, getClientIp } from "../_shared/rateLimit.ts";
 import { errorResponse, jsonResponse } from "../_shared/response.ts";
 import { createServiceClient, requireUser } from "../_shared/supabase.ts";
@@ -35,11 +38,18 @@ type SyncFrequentZonesBody = {
 };
 
 const frequentZoneTableCandidates = ["frequent_zone", "frequent_zones"];
-const allowedParkingTypes = new Set(["Gratuit", "Payant", "Resident", "Souterrain", "Inconnu"]);
+const allowedParkingTypes = new Set([
+  "Gratuit",
+  "Payant",
+  "Resident",
+  "Souterrain",
+  "Inconnu",
+]);
 
 function isMissingRelationError(message: string | undefined): boolean {
   const normalized = (message ?? "").toLowerCase();
-  return normalized.includes("relation") && normalized.includes("does not exist");
+  return normalized.includes("relation") &&
+    normalized.includes("does not exist");
 }
 
 function normalizeStatusToken(value: unknown): string {
@@ -49,7 +59,9 @@ function normalizeStatusToken(value: unknown): string {
 }
 
 function isPaidStatusId(value: unknown): boolean {
-  if (typeof value === "number" && Number.isInteger(value)) return value === 2 || value === 3;
+  if (typeof value === "number" && Number.isInteger(value)) {
+    return value === 2 || value === 3;
+  }
   if (typeof value === "string") {
     const parsed = Number(value.trim());
     return Number.isInteger(parsed) && (parsed === 2 || parsed === 3);
@@ -59,10 +71,10 @@ function isPaidStatusId(value: unknown): boolean {
 
 function isPremiumLikeStatus(value: unknown): boolean {
   const normalized = normalizeStatusToken(value);
-  return normalized === "paid"
-    || normalized === "premium"
-    || normalized === "paid_monthly"
-    || normalized === "paid_lifetime";
+  return normalized === "paid" ||
+    normalized === "premium" ||
+    normalized === "paid_monthly" ||
+    normalized === "paid_lifetime";
 }
 
 function pickString(value: Record<string, unknown>, ...keys: string[]): string {
@@ -75,7 +87,11 @@ function pickString(value: Record<string, unknown>, ...keys: string[]): string {
   return "";
 }
 
-function pickNullableString(value: Record<string, unknown>, maxLength: number, ...keys: string[]): string | null {
+function pickNullableString(
+  value: Record<string, unknown>,
+  maxLength: number,
+  ...keys: string[]
+): string | null {
   for (const key of keys) {
     const candidate = value[key];
     if (candidate === null) return null;
@@ -87,17 +103,27 @@ function pickNullableString(value: Record<string, unknown>, maxLength: number, .
   return null;
 }
 
-function pickNumber(value: Record<string, unknown>, ...keys: string[]): number | null {
+function pickNumber(
+  value: Record<string, unknown>,
+  ...keys: string[]
+): number | null {
   for (const key of keys) {
     const candidate = value[key];
-    if (typeof candidate === "number" && Number.isFinite(candidate)) return candidate;
+    if (typeof candidate === "number" && Number.isFinite(candidate)) {
+      return candidate;
+    }
   }
   return null;
 }
 
-function pickInteger(value: Record<string, unknown>, ...keys: string[]): number | null {
+function pickInteger(
+  value: Record<string, unknown>,
+  ...keys: string[]
+): number | null {
   const valueNumber = pickNumber(value, ...keys);
-  return valueNumber !== null && Number.isInteger(valueNumber) ? valueNumber : null;
+  return valueNumber !== null && Number.isInteger(valueNumber)
+    ? valueNumber
+    : null;
 }
 
 function mapZoneRow(row: Record<string, unknown>) {
@@ -131,7 +157,9 @@ async function resolveFrequentZoneTable(
 
 async function retryAfterFrequentZoneSchemaBootstrap<T>(
   tableName: string,
-  operation: () => Promise<{ data: T | null; error: { message?: string } | null }>,
+  operation: () => Promise<
+    { data: T | null; error: { message?: string } | null }
+  >,
 ): Promise<{ data: T | null; error: { message?: string } | null }> {
   let result = await operation();
 
@@ -142,7 +170,9 @@ async function retryAfterFrequentZoneSchemaBootstrap<T>(
     } catch (bootstrapError) {
       console.error(
         "[frequent-zones] Failed to bootstrap schema:",
-        bootstrapError instanceof Error ? bootstrapError.message : String(bootstrapError),
+        bootstrapError instanceof Error
+          ? bootstrapError.message
+          : String(bootstrapError),
       );
     }
   }
@@ -150,6 +180,9 @@ async function retryAfterFrequentZoneSchemaBootstrap<T>(
   return result;
 }
 
+// TODO(sécurité): ce contrôle Premium n'est appelé nulle part — l'accès aux zones
+// fréquentes n'est donc pas restreint aux comptes Premium côté serveur.
+// deno-lint-ignore no-unused-vars
 async function userHasFrequentZonesAccess(
   service: ReturnType<typeof createServiceClient>,
   userId: string,
@@ -172,15 +205,21 @@ async function userHasFrequentZonesAccess(
 
     if (error) {
       const message = (error.message ?? "").toLowerCase();
-      const isUnknownColumn = message.includes("column") && message.includes("does not exist");
+      const isUnknownColumn = message.includes("column") &&
+        message.includes("does not exist");
       if (isUnknownColumn) continue;
-      console.warn("[frequent-zones] Unable to read user profile:", error.message ?? "unknown error");
+      console.warn(
+        "[frequent-zones] Unable to read user profile:",
+        error.message ?? "unknown error",
+      );
       return false;
     }
 
     const profile = data as Record<string, unknown> | null;
     if (!profile) return false;
-    if (isPaidStatusId(profile.status_id) || isPaidStatusId(profile.role_id)) return true;
+    if (isPaidStatusId(profile.status_id) || isPaidStatusId(profile.role_id)) {
+      return true;
+    }
     if (profile.is_premium === true) return true;
     return isPremiumLikeStatus(profile.status);
   }
@@ -199,9 +238,16 @@ function normalizeZonePayload(
   const longitude = pickNumber(normalizedZone, "longitude");
   const visits = pickInteger(normalizedZone, "visits") ?? 1;
   const rawName = pickString(normalizedZone, "name") || "Zone fréquente";
-  const lastVisitedAtRaw = pickString(normalizedZone, "lastVisitedAt", "last_visited_at");
-  const lastVisitedAt = lastVisitedAtRaw ? new Date(lastVisitedAtRaw) : new Date();
-  const parkingType = pickString(normalizedZone, "parkingType", "parking_type") || "Inconnu";
+  const lastVisitedAtRaw = pickString(
+    normalizedZone,
+    "lastVisitedAt",
+    "last_visited_at",
+  );
+  const lastVisitedAt = lastVisitedAtRaw
+    ? new Date(lastVisitedAtRaw)
+    : new Date();
+  const parkingType =
+    pickString(normalizedZone, "parkingType", "parking_type") || "Inconnu";
   const preferredDuration = pickInteger(
     normalizedZone,
     "preferredDurationMinutes",
@@ -209,29 +255,44 @@ function normalizeZonePayload(
   );
 
   if (!isUuid(zoneId)) return { message: "ID de zone invalide.", status: 400 };
-  if (zoneUserId && zoneUserId !== userId) return { message: "Forbidden", status: 403 };
+  if (zoneUserId && zoneUserId !== userId) {
+    return { message: "Forbidden", status: 403 };
+  }
   if (latitude === null || latitude < -90 || latitude > 90) {
     return { message: "Latitude invalide.", status: 400 };
   }
   if (longitude === null || longitude < -180 || longitude > 180) {
     return { message: "Longitude invalide.", status: 400 };
   }
-  if (visits < 1) return { message: "Nombre de visites invalide.", status: 400 };
-  if (Number.isNaN(lastVisitedAt.getTime())) return { message: "lastVisitedAt invalide.", status: 400 };
-  if (!allowedParkingTypes.has(parkingType)) return { message: "Type de stationnement invalide.", status: 400 };
+  if (visits < 1) {
+    return { message: "Nombre de visites invalide.", status: 400 };
+  }
+  if (Number.isNaN(lastVisitedAt.getTime())) {
+    return { message: "lastVisitedAt invalide.", status: 400 };
+  }
+  if (!allowedParkingTypes.has(parkingType)) {
+    return { message: "Type de stationnement invalide.", status: 400 };
+  }
 
   const row: Record<string, unknown> = {
     id: zoneId,
     user_id: userId,
     name: rawName.trim().slice(0, 80),
     details: pickNullableString(normalizedZone, 1_000, "details"),
-    landmark_level: pickNullableString(normalizedZone, 80, "landmarkLevel", "landmark_level"),
+    landmark_level: pickNullableString(
+      normalizedZone,
+      80,
+      "landmarkLevel",
+      "landmark_level",
+    ),
     latitude,
     longitude,
     visits,
     last_visited_at: lastVisitedAt.toISOString(),
     deleted_at: null,
-    preferred_duration_minutes: preferredDuration === null ? null : clamp(preferredDuration, 5, 720),
+    preferred_duration_minutes: preferredDuration === null
+      ? null
+      : clamp(preferredDuration, 5, 720),
     parking_type: parkingType,
   };
 
@@ -258,34 +319,51 @@ Deno.serve(async (req: Request) => {
       windowSeconds: 60,
     });
     if (!rate.allowed) {
-      return errorResponse(`Trop de requêtes. Réessaie dans ${rate.retryAfterSeconds}s.`, 429, headers);
+      return errorResponse(
+        `Trop de requêtes. Réessaie dans ${rate.retryAfterSeconds}s.`,
+        429,
+        headers,
+      );
     }
 
     const service = createServiceClient();
     const userId = auth.user.id;
     const requestedUserId = url.searchParams.get("userId")?.trim() || userId;
-    if (requestedUserId !== userId) return errorResponse("Forbidden", 403, headers);
+    if (requestedUserId !== userId) {
+      return errorResponse("Forbidden", 403, headers);
+    }
 
     const tableName = await resolveFrequentZoneTable(service);
 
     if (req.method === "GET") {
-      const includeDeletedRaw = (url.searchParams.get("includeDeleted") ?? "").trim().toLowerCase();
-      const includeDeleted = includeDeletedRaw === "1" || includeDeletedRaw == "true";
-      const { data, error } = await retryAfterFrequentZoneSchemaBootstrap(tableName, () => {
-        let query = service
-          .from(tableName)
-          .select("*")
-          .eq("user_id", userId)
-          .order("last_visited_at", { ascending: false });
+      const includeDeletedRaw = (url.searchParams.get("includeDeleted") ?? "")
+        .trim().toLowerCase();
+      const includeDeleted = includeDeletedRaw === "1" ||
+        includeDeletedRaw == "true";
+      const { data, error } = await retryAfterFrequentZoneSchemaBootstrap(
+        tableName,
+        () => {
+          let query = service
+            .from(tableName)
+            .select("*")
+            .eq("user_id", userId)
+            .order("last_visited_at", { ascending: false });
 
-        if (!includeDeleted) {
-          query = query.is("deleted_at", null);
-        }
+          if (!includeDeleted) {
+            query = query.is("deleted_at", null);
+          }
 
-        return query;
-      });
+          return query;
+        },
+      );
 
-      if (error) return errorResponse(error.message ?? "Impossible de charger les zones fréquentes.", 500, headers);
+      if (error) {
+        return errorResponse(
+          error.message ?? "Impossible de charger les zones fréquentes.",
+          500,
+          headers,
+        );
+      }
       return jsonResponse((data ?? []).map(mapZoneRow), { headers });
     }
 
@@ -293,10 +371,14 @@ Deno.serve(async (req: Request) => {
       const body = parseJson<SyncFrequentZonesBody>(await req.text());
       const normalizedBody = (body ?? {}) as Record<string, unknown>;
       const bodyUserId = pickString(normalizedBody, "userId", "user_id");
-      if (bodyUserId !== userId) return errorResponse("Forbidden", 403, headers);
+      if (bodyUserId !== userId) {
+        return errorResponse("Forbidden", 403, headers);
+      }
 
       const zones = Array.isArray(body?.zones) ? body.zones : [];
-      if (zones.length > 100) return errorResponse("Trop de zones fréquentes.", 400, headers);
+      if (zones.length > 100) {
+        return errorResponse("Trop de zones fréquentes.", 400, headers);
+      }
 
       const rows: Record<string, unknown>[] = [];
       for (const zone of zones) {
@@ -308,67 +390,105 @@ Deno.serve(async (req: Request) => {
       }
 
       if (rows.length > 0) {
-        const { error } = await retryAfterFrequentZoneSchemaBootstrap(tableName, () =>
-          service
-            .from(tableName)
-            .upsert(rows, { onConflict: "id" })
+        const { error } = await retryAfterFrequentZoneSchemaBootstrap(
+          tableName,
+          () =>
+            service
+              .from(tableName)
+              .upsert(rows, { onConflict: "id" }),
         );
 
-        if (error) return errorResponse(error.message ?? "Impossible de sauvegarder les zones fréquentes.", 500, headers);
+        if (error) {
+          return errorResponse(
+            error.message ?? "Impossible de sauvegarder les zones fréquentes.",
+            500,
+            headers,
+          );
+        }
       }
 
       const deletedAt = new Date().toISOString();
-      const deleteResult = await retryAfterFrequentZoneSchemaBootstrap(tableName, () => {
-        const deleteQuery = service
-          .from(tableName)
-          .update({ deleted_at: deletedAt })
-          .eq("user_id", userId)
-          .is("deleted_at", null);
-        const idList = rows
-          .map((row) => `"${String(row.id)}"`)
-          .join(",");
+      const deleteResult = await retryAfterFrequentZoneSchemaBootstrap(
+        tableName,
+        () => {
+          const deleteQuery = service
+            .from(tableName)
+            .update({ deleted_at: deletedAt })
+            .eq("user_id", userId)
+            .is("deleted_at", null);
+          const idList = rows
+            .map((row) => `"${String(row.id)}"`)
+            .join(",");
 
-        return rows.length > 0
-          ? deleteQuery.not("id", "in", `(${idList})`)
-          : deleteQuery;
-      });
-
-      if (deleteResult.error) {
-        return errorResponse(deleteResult.error.message ?? "Impossible de nettoyer les zones fréquentes.", 500, headers);
-      }
-
-      const { data, error } = await retryAfterFrequentZoneSchemaBootstrap(tableName, () =>
-        service
-          .from(tableName)
-          .select("*")
-          .eq("user_id", userId)
-          .order("last_visited_at", { ascending: false })
+          return rows.length > 0
+            ? deleteQuery.not("id", "in", `(${idList})`)
+            : deleteQuery;
+        },
       );
 
-      if (error) return errorResponse(error.message ?? "Impossible de relire les zones fréquentes.", 500, headers);
+      if (deleteResult.error) {
+        return errorResponse(
+          deleteResult.error.message ??
+            "Impossible de nettoyer les zones fréquentes.",
+          500,
+          headers,
+        );
+      }
+
+      const { data, error } = await retryAfterFrequentZoneSchemaBootstrap(
+        tableName,
+        () =>
+          service
+            .from(tableName)
+            .select("*")
+            .eq("user_id", userId)
+            .order("last_visited_at", { ascending: false }),
+      );
+
+      if (error) {
+        return errorResponse(
+          error.message ?? "Impossible de relire les zones fréquentes.",
+          500,
+          headers,
+        );
+      }
       return jsonResponse((data ?? []).map(mapZoneRow), { headers });
     }
 
     if (req.method === "DELETE") {
       const segments = path.split("/").filter(Boolean);
       const zoneId = segments[segments.length - 1] ?? "";
-      if (!isUuid(zoneId)) return errorResponse("ID de zone invalide.", 400, headers);
+      if (!isUuid(zoneId)) {
+        return errorResponse("ID de zone invalide.", 400, headers);
+      }
 
-      const { error } = await retryAfterFrequentZoneSchemaBootstrap(tableName, () =>
-        service
-          .from(tableName)
-          .update({ deleted_at: new Date().toISOString() })
-          .eq("user_id", userId)
-          .eq("id", zoneId)
-          .is("deleted_at", null)
+      const { error } = await retryAfterFrequentZoneSchemaBootstrap(
+        tableName,
+        () =>
+          service
+            .from(tableName)
+            .update({ deleted_at: new Date().toISOString() })
+            .eq("user_id", userId)
+            .eq("id", zoneId)
+            .is("deleted_at", null),
       );
 
-      if (error) return errorResponse(error.message ?? "Impossible de supprimer la zone fréquente.", 500, headers);
+      if (error) {
+        return errorResponse(
+          error.message ?? "Impossible de supprimer la zone fréquente.",
+          500,
+          headers,
+        );
+      }
       return jsonResponse({ ok: true }, { headers });
     }
 
     return errorResponse("Route not found.", 404, headers);
   } catch (e) {
-    return errorResponse(`Erreur serveur: ${e instanceof Error ? e.message : "unknown"}`, 500, headers);
+    return errorResponse(
+      `Erreur serveur: ${e instanceof Error ? e.message : "unknown"}`,
+      500,
+      headers,
+    );
   }
 });

@@ -19,19 +19,21 @@ export function isFrequentZoneSchemaMismatch(message?: string | null): boolean {
     return false;
   }
 
-  const mentionsFrequentZones = normalized.includes("frequent_zone")
-    || normalized.includes("frequent_zones");
+  const mentionsFrequentZones = normalized.includes("frequent_zone") ||
+    normalized.includes("frequent_zones");
 
   if (!mentionsFrequentZones) {
     return false;
   }
 
-  return normalized.includes("schema cache")
-    || normalized.includes("does not exist")
-    || normalized.includes("column");
+  return normalized.includes("schema cache") ||
+    normalized.includes("does not exist") ||
+    normalized.includes("column");
 }
 
-export async function ensureFrequentZoneSchema(preferredTableName?: string): Promise<void> {
+export async function ensureFrequentZoneSchema(
+  preferredTableName?: string,
+): Promise<void> {
   if (bootstrapInFlight) {
     return bootstrapInFlight;
   }
@@ -59,8 +61,8 @@ export async function ensureFrequentZoneSchema(preferredTableName?: string): Pro
       const targetTable = existingPlural[0]?.exists
         ? "frequent_zones"
         : existingSingular[0]?.exists
-          ? "frequent_zone"
-          : requestedTable;
+        ? "frequent_zone"
+        : requestedTable;
 
       if (!allowedTableNames.has(targetTable)) {
         throw new Error(`Unsupported frequent zone table: ${targetTable}`);

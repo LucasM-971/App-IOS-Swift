@@ -45,7 +45,10 @@ export function checkRateLimit(params: RateLimitParams): RateLimitResult {
   }
 
   if (current.count >= params.limit) {
-    const retryAfterSeconds = Math.max(1, Math.ceil((current.resetAt - now) / 1000));
+    const retryAfterSeconds = Math.max(
+      1,
+      Math.ceil((current.resetAt - now) / 1000),
+    );
     return {
       allowed: false,
       remaining: 0,

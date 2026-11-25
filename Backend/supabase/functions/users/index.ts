@@ -8,7 +8,8 @@ import { isUuid } from "../_shared/validation.ts";
 
 function isMissingRelationError(message: string | undefined): boolean {
   const normalized = (message ?? "").toLowerCase();
-  return normalized.includes("relation") && normalized.includes("does not exist");
+  return normalized.includes("relation") &&
+    normalized.includes("does not exist");
 }
 
 Deno.serve(async (req: Request) => {
@@ -31,13 +32,21 @@ Deno.serve(async (req: Request) => {
       windowSeconds: 60,
     });
     if (!rate.allowed) {
-      return errorResponse(`Trop de requêtes. Réessaie dans ${rate.retryAfterSeconds}s.`, 429, headers);
+      return errorResponse(
+        `Trop de requêtes. Réessaie dans ${rate.retryAfterSeconds}s.`,
+        429,
+        headers,
+      );
     }
 
     if (req.method === "DELETE" && path.includes("data")) {
-      const userId = path.split("/").filter(x => x && x !== "data").pop();
-      if (!userId || !isUuid(userId)) return errorResponse("User ID invalide.", 400, headers);
-      if (auth.user.id !== userId) return errorResponse("Forbidden", 403, headers);
+      const userId = path.split("/").filter((x) => x && x !== "data").pop();
+      if (!userId || !isUuid(userId)) {
+        return errorResponse("User ID invalide.", 400, headers);
+      }
+      if (auth.user.id !== userId) {
+        return errorResponse("Forbidden", 403, headers);
+      }
 
       const service = createServiceClient();
       const { error } = await service
@@ -52,8 +61,15 @@ Deno.serve(async (req: Request) => {
         .delete()
         .eq("user_id", userId);
 
-      if (historyDelete.error && !isMissingRelationError(historyDelete.error.message)) {
-        return errorResponse("Failed to delete history backup data.", 500, headers);
+      if (
+        historyDelete.error &&
+        !isMissingRelationError(historyDelete.error.message)
+      ) {
+        return errorResponse(
+          "Failed to delete history backup data.",
+          500,
+          headers,
+        );
       }
 
       return jsonResponse({ ok: true }, { headers });
@@ -61,6 +77,10 @@ Deno.serve(async (req: Request) => {
 
     return errorResponse("Route not found.", 404, headers);
   } catch (e) {
-    return errorResponse(`Erreur serveur: ${e instanceof Error ? e.message : "unknown"}`, 500, headers);
+    return errorResponse(
+      `Erreur serveur: ${e instanceof Error ? e.message : "unknown"}`,
+      500,
+      headers,
+    );
   }
 });

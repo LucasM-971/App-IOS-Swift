@@ -1,7 +1,13 @@
+// Shim de types pour l'éditeur : les `any` sont volontaires.
+// deno-lint-ignore-file no-explicit-any
 declare module "npm:@supabase/supabase-js@2.49.1" {
   export type SupabaseClient = {
     auth: {
-      getUser: (token?: string) => Promise<{ data: { user: any | null }; error: { message?: string } | null }>;
+      getUser: (
+        token?: string,
+      ) => Promise<
+        { data: { user: any | null }; error: { message?: string } | null }
+      >;
       signUp: (payload: any) => Promise<any>;
       signInWithPassword: (payload: any) => Promise<any>;
       resend: (payload: any) => Promise<any>;
@@ -17,7 +23,11 @@ declare module "npm:@supabase/supabase-js@2.49.1" {
     from: (table: string) => any;
   };
 
-  export function createClient(url: string, key: string, options?: any): SupabaseClient;
+  export function createClient(
+    url: string,
+    key: string,
+    options?: any,
+  ): SupabaseClient;
 }
 
 // Loading history

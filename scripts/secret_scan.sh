@@ -49,6 +49,7 @@ if [[ "${#files[@]}" -eq 0 ]]; then
   exit 0
 fi
 
+# grep -E (POSIX ERE) : pas de dépendance à ripgrep, fonctionne sur macOS et Linux.
 patterns=(
   'eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}'
   'AIza[0-9A-Za-z_-]{35}'
@@ -68,7 +69,7 @@ tmpfile="$(mktemp)"
 trap 'rm -f "$tmpfile"' EXIT
 
 for pattern in "${patterns[@]}"; do
-  if printf '%s\0' "${files[@]}" | xargs -0 rg -n --color never -I -e "$pattern" >>"$tmpfile"; then
+  if printf '%s\0' "${files[@]}" | xargs -0 grep -nIHE -e "$pattern" -- >>"$tmpfile" 2>/dev/null; then
     :
   fi
 done

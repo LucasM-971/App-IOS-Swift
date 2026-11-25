@@ -1,10 +1,17 @@
 /// <reference path="../_shared/deno-shim.d.ts" />
 
 import { corsHeaders, handleCors } from "../_shared/cors.ts";
-import { ensureParkingSchema, isParkingSchemaCacheMiss } from "../_shared/parkingSchema.ts";
+import {
+  ensureParkingSchema,
+  isParkingSchemaCacheMiss,
+} from "../_shared/parkingSchema.ts";
 import { checkRateLimit, getClientIp } from "../_shared/rateLimit.ts";
 import { errorResponse, jsonResponse } from "../_shared/response.ts";
-import { createServiceClient, createUserClient, requireUser } from "../_shared/supabase.ts";
+import {
+  createServiceClient,
+  createUserClient,
+  requireUser,
+} from "../_shared/supabase.ts";
 import { clamp, isUuid, parseJson } from "../_shared/validation.ts";
 
 type CreateParkingBody = {
@@ -49,7 +56,10 @@ function mapRow(row: Record<string, unknown>) {
   };
 }
 
-function explainParkingDatabaseError(message: string | undefined, fallback: string): string {
+function explainParkingDatabaseError(
+  message: string | undefined,
+  fallback: string,
+): string {
   const normalized = (message ?? "").trim().toLowerCase();
 
   if (!normalized) {
@@ -57,17 +67,17 @@ function explainParkingDatabaseError(message: string | undefined, fallback: stri
   }
 
   if (
-    normalized.includes("relation")
-    && normalized.includes("parking_sessions")
-    && normalized.includes("does not exist")
+    normalized.includes("relation") &&
+    normalized.includes("parking_sessions") &&
+    normalized.includes("does not exist")
   ) {
     return "Parking database table missing. Apply Backend/supabase/sql/schema.sql in Supabase, then retry.";
   }
 
   if (
-    normalized.includes("permission denied")
-    || normalized.includes("row-level security")
-    || normalized.includes("violates row-level security")
+    normalized.includes("permission denied") ||
+    normalized.includes("row-level security") ||
+    normalized.includes("violates row-level security")
   ) {
     return "Parking database permissions are not aligned with the current schema. Apply Backend/supabase/sql/schema.sql in Supabase, then retry.";
   }
@@ -76,7 +86,9 @@ function explainParkingDatabaseError(message: string | undefined, fallback: stri
 }
 
 async function retryAfterParkingSchemaBootstrap<T>(
-  operation: () => Promise<{ data: T | null; error: { message?: string } | null }>,
+  operation: () => Promise<
+    { data: T | null; error: { message?: string } | null }
+  >,
 ): Promise<{ data: T | null; error: { message?: string } | null }> {
   let result = await operation();
 
@@ -87,7 +99,9 @@ async function retryAfterParkingSchemaBootstrap<T>(
     } catch (bootstrapError) {
       console.error(
         "[parking] Failed to bootstrap parking schema:",
-        bootstrapError instanceof Error ? bootstrapError.message : String(bootstrapError),
+        bootstrapError instanceof Error
+          ? bootstrapError.message
+          : String(bootstrapError),
       );
     }
   }
@@ -102,10 +116,10 @@ function normalizeStatusToken(value: string): string {
 function isPremiumLikeStatus(status: unknown): boolean {
   if (typeof status !== "string") return false;
   const normalized = normalizeStatusToken(status);
-  return normalized === "paid"
-    || normalized === "premium"
-    || normalized === "paid_monthly"
-    || normalized === "paid_lifetime";
+  return normalized === "paid" ||
+    normalized === "premium" ||
+    normalized === "paid_monthly" ||
+    normalized === "paid_lifetime";
 }
 
 function isFreeStatusId(value: unknown): boolean {
@@ -144,8 +158,12 @@ function coerceBoolean(value: unknown): boolean | null {
 
   if (typeof value === "string") {
     const normalized = value.trim().toLowerCase();
-    if (["1", "true", "yes", "y", "on", "paid", "premium"].includes(normalized)) return true;
-    if (["0", "false", "no", "n", "off", "free"].includes(normalized)) return false;
+    if (
+      ["1", "true", "yes", "y", "on", "paid", "premium"].includes(normalized)
+    ) return true;
+    if (["0", "false", "no", "n", "off", "free"].includes(normalized)) {
+      return false;
+    }
   }
 
   return null;
@@ -161,7 +179,10 @@ function pickString(value: Record<string, unknown>, ...keys: string[]): string {
   return "";
 }
 
-function pickNullableString(value: Record<string, unknown>, ...keys: string[]): string | null {
+function pickNullableString(
+  value: Record<string, unknown>,
+  ...keys: string[]
+): string | null {
   for (const key of keys) {
     const candidate = value[key];
     if (candidate === null) {
@@ -175,7 +196,10 @@ function pickNullableString(value: Record<string, unknown>, ...keys: string[]): 
   return null;
 }
 
-function pickNumber(value: Record<string, unknown>, ...keys: string[]): number | null {
+function pickNumber(
+  value: Record<string, unknown>,
+  ...keys: string[]
+): number | null {
   for (const key of keys) {
     const candidate = value[key];
     if (typeof candidate === "number" && Number.isFinite(candidate)) {
@@ -207,11 +231,15 @@ async function readUserProfileRecord(
 
     if (error) {
       const message = (error.message ?? "").toLowerCase();
-      const isUnknownColumn = message.includes("column") && message.includes("does not exist");
+      const isUnknownColumn = message.includes("column") &&
+        message.includes("does not exist");
       if (isUnknownColumn) {
         continue;
       }
-      console.warn("[parking/history] Unable to read history retention status:", error.message ?? "unknown error");
+      console.warn(
+        "[parking/history] Unable to read history retention status:",
+        error.message ?? "unknown error",
+      );
       return null;
     }
 
@@ -244,12 +272,16 @@ async function resolveUserHistoryRetentionDays(
 
   const explicitPremium = coerceBoolean(profile.is_premium);
   if (explicitPremium !== null) {
-    return explicitPremium ? PREMIUM_HISTORY_RETENTION_DAYS : FREE_HISTORY_RETENTION_DAYS;
+    return explicitPremium
+      ? PREMIUM_HISTORY_RETENTION_DAYS
+      : FREE_HISTORY_RETENTION_DAYS;
   }
 
   const adsEnabled = coerceBoolean(profile.ads_enabled);
   if (adsEnabled !== null) {
-    return adsEnabled ? FREE_HISTORY_RETENTION_DAYS : PREMIUM_HISTORY_RETENTION_DAYS;
+    return adsEnabled
+      ? FREE_HISTORY_RETENTION_DAYS
+      : PREMIUM_HISTORY_RETENTION_DAYS;
   }
 
   if (isPaidStatusId(profile.role_id)) {
@@ -285,17 +317,25 @@ Deno.serve(async (req: Request) => {
       windowSeconds: 60,
     });
     if (!rate.allowed) {
-      return errorResponse(`Trop de requêtes. Réessaie dans ${rate.retryAfterSeconds}s.`, 429, headers);
+      return errorResponse(
+        `Trop de requêtes. Réessaie dans ${rate.retryAfterSeconds}s.`,
+        429,
+        headers,
+      );
     }
 
     const service = createServiceClient();
     const database = createUserClient(auth.token);
     const userId = auth.user.id;
 
-    if (req.method === "POST" && !path.includes("active") && !path.includes("history")) {
+    if (
+      req.method === "POST" && !path.includes("active") &&
+      !path.includes("history")
+    ) {
       const body = parseJson<CreateParkingBody>(await req.text());
       const normalizedBody = (body ?? {}) as Record<string, unknown>;
-      const requestedId = typeof normalizedBody.id === "string" && normalizedBody.id.trim().length > 0
+      const requestedId = typeof normalizedBody.id === "string" &&
+          normalizedBody.id.trim().length > 0
         ? normalizedBody.id.trim()
         : null;
       const latitude = pickNumber(normalizedBody, "latitude");
@@ -310,7 +350,11 @@ Deno.serve(async (req: Request) => {
         return errorResponse("ID invalide.", 400, headers);
       }
 
-      const startTimeRaw = pickString(normalizedBody, "startTime", "start_time");
+      const startTimeRaw = pickString(
+        normalizedBody,
+        "startTime",
+        "start_time",
+      );
       const endTimeRaw = pickString(normalizedBody, "endTime", "end_time");
       const startTime = startTimeRaw ? new Date(startTimeRaw) : new Date();
       if (Number.isNaN(startTime.getTime())) {
@@ -330,7 +374,11 @@ Deno.serve(async (req: Request) => {
         longitude,
         address: pickNullableString(normalizedBody, "address"),
         note: pickNullableString(normalizedBody, "note"),
-        parking_level: pickNullableString(normalizedBody, "parkingLevel", "parking_level"),
+        parking_level: pickNullableString(
+          normalizedBody,
+          "parkingLevel",
+          "parking_level",
+        ),
         zone: pickString(normalizedBody, "zone") || "Inconnu",
         start_time: startTime.toISOString(),
         end_time: endTime ? endTime.toISOString() : null,
@@ -350,7 +398,10 @@ Deno.serve(async (req: Request) => {
 
       if (error || !data) {
         return errorResponse(
-          explainParkingDatabaseError(error?.message, "Failed to create or update parking entry."),
+          explainParkingDatabaseError(
+            error?.message,
+            "Failed to create or update parking entry.",
+          ),
           400,
           headers,
         );
@@ -372,7 +423,10 @@ Deno.serve(async (req: Request) => {
 
       if (error) {
         return errorResponse(
-          explainParkingDatabaseError(error.message, "Failed to read active parking entry."),
+          explainParkingDatabaseError(
+            error.message,
+            "Failed to read active parking entry.",
+          ),
           500,
           headers,
         );
@@ -380,7 +434,10 @@ Deno.serve(async (req: Request) => {
       return jsonResponse(data ? mapRow(data) : null, { headers });
     }
 
-    if (req.method === "POST" && path.includes("history") && path.includes("purge")) {
+    if (
+      req.method === "POST" && path.includes("history") &&
+      path.includes("purge")
+    ) {
       const body = parseJson<PurgeHistoryBody>(await req.text());
       const normalizedBody = (body ?? {}) as Record<string, unknown>;
       const requestedUserId = pickString(normalizedBody, "userId", "user_id");
@@ -388,7 +445,9 @@ Deno.serve(async (req: Request) => {
         return errorResponse("Forbidden", 403, headers);
       }
 
-      const before = typeof body?.before === "string" ? new Date(body.before) : null;
+      const before = typeof body?.before === "string"
+        ? new Date(body.before)
+        : null;
       if (!before || Number.isNaN(before.getTime())) {
         return errorResponse("Date de purge invalide.", 400, headers);
       }
@@ -404,7 +463,10 @@ Deno.serve(async (req: Request) => {
 
       if (error) {
         return errorResponse(
-          explainParkingDatabaseError(error.message, "Failed to purge history."),
+          explainParkingDatabaseError(
+            error.message,
+            "Failed to purge history.",
+          ),
           500,
           headers,
         );
@@ -413,9 +475,19 @@ Deno.serve(async (req: Request) => {
     }
 
     if (req.method === "GET" && path.includes("history")) {
-      const limit = clamp(Number(url.searchParams.get("limit") ?? "20") || 20, 1, 100);
-      const offset = Math.max(0, Number(url.searchParams.get("offset") ?? "0") || 0);
-      const retentionDays = await resolveUserHistoryRetentionDays(service, userId);
+      const limit = clamp(
+        Number(url.searchParams.get("limit") ?? "20") || 20,
+        1,
+        100,
+      );
+      const offset = Math.max(
+        0,
+        Number(url.searchParams.get("offset") ?? "0") || 0,
+      );
+      const retentionDays = await resolveUserHistoryRetentionDays(
+        service,
+        userId,
+      );
       const cutoff = new Date();
       cutoff.setUTCDate(cutoff.getUTCDate() - retentionDays);
 
@@ -441,7 +513,9 @@ Deno.serve(async (req: Request) => {
 
     if (req.method === "PATCH" && path.includes("end")) {
       const id = path.split("/end")[0].split("/").pop();
-      if (!id || !isUuid(id)) return errorResponse("ID invalide.", 400, headers);
+      if (!id || !isUuid(id)) {
+        return errorResponse("ID invalide.", 400, headers);
+      }
 
       const { data, error } = await retryAfterParkingSchemaBootstrap(() =>
         database
@@ -455,7 +529,10 @@ Deno.serve(async (req: Request) => {
 
       if (error || !data) {
         return errorResponse(
-          explainParkingDatabaseError(error?.message, "Unable to end the parking session."),
+          explainParkingDatabaseError(
+            error?.message,
+            "Unable to end the parking session.",
+          ),
           404,
           headers,
         );
@@ -463,9 +540,14 @@ Deno.serve(async (req: Request) => {
       return jsonResponse(mapRow(data), { headers });
     }
 
-    if (req.method === "DELETE" && !path.includes("active") && !path.includes("history") && !path.includes("end")) {
+    if (
+      req.method === "DELETE" && !path.includes("active") &&
+      !path.includes("history") && !path.includes("end")
+    ) {
       const id = path.split("/").pop();
-      if (!id || !isUuid(id)) return errorResponse("ID invalide.", 400, headers);
+      if (!id || !isUuid(id)) {
+        return errorResponse("ID invalide.", 400, headers);
+      }
 
       const { error } = await retryAfterParkingSchemaBootstrap(() =>
         database
@@ -477,7 +559,10 @@ Deno.serve(async (req: Request) => {
 
       if (error) {
         return errorResponse(
-          explainParkingDatabaseError(error.message, "Unable to delete the parking session."),
+          explainParkingDatabaseError(
+            error.message,
+            "Unable to delete the parking session.",
+          ),
           404,
           headers,
         );
@@ -487,6 +572,10 @@ Deno.serve(async (req: Request) => {
 
     return errorResponse("Route not found.", 404, headers);
   } catch (e) {
-    return errorResponse(`Erreur serveur: ${e instanceof Error ? e.message : "unknown"}`, 500, headers);
+    return errorResponse(
+      `Erreur serveur: ${e instanceof Error ? e.message : "unknown"}`,
+      500,
+      headers,
+    );
   }
 });

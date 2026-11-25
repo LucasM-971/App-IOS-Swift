@@ -9,7 +9,11 @@ type AuthResponse = {
   };
 };
 
-async function postJson<T>(url: string, payload: unknown, bearer?: string): Promise<T> {
+async function postJson<T>(
+  url: string,
+  payload: unknown,
+  bearer?: string,
+): Promise<T> {
   const response = await fetch(url, {
     method: "POST",
     headers: {
@@ -37,7 +41,10 @@ Deno.test("auth e2e: login -> refresh -> logout", async () => {
     return;
   }
 
-  const login = await postJson<AuthResponse>(`${baseUrl}/login`, { email, password });
+  const login = await postJson<AuthResponse>(`${baseUrl}/login`, {
+    email,
+    password,
+  });
   if (!login.accessToken || !login.refreshToken || !login.user?.id) {
     throw new Error("Login response missing tokens or user.");
   }
@@ -49,5 +56,9 @@ Deno.test("auth e2e: login -> refresh -> logout", async () => {
     throw new Error("Refresh response missing tokens.");
   }
 
-  await postJson<{ ok: boolean }>(`${baseUrl}/logout`, {}, refreshed.accessToken);
+  await postJson<{ ok: boolean }>(
+    `${baseUrl}/logout`,
+    {},
+    refreshed.accessToken,
+  );
 });

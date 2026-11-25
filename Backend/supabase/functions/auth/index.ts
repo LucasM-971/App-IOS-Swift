@@ -3,7 +3,11 @@
 import { corsHeaders, handleCors } from "../_shared/cors.ts";
 import { errorResponse, jsonResponse } from "../_shared/response.ts";
 import { checkRateLimit, getClientIp } from "../_shared/rateLimit.ts";
-import { createAnonClient, createServiceClient, createUserClient, requireUser } from "../_shared/supabase.ts";
+import {
+  createAnonClient,
+  createServiceClient,
+  requireUser,
+} from "../_shared/supabase.ts";
 import { parseJson } from "../_shared/validation.ts";
 
 type RegisterBody = {
@@ -115,22 +119,24 @@ function isRateLimited(message?: string | null) {
 
 function isEmailNotConfirmed(message?: string | null) {
   const lowered = (message ?? "").toLowerCase();
-  return lowered.includes("email not confirmed") || lowered.includes("email_not_confirmed");
+  return lowered.includes("email not confirmed") ||
+    lowered.includes("email_not_confirmed");
 }
 
 function isDatabaseErrorSavingNewUser(message?: string | null) {
   const lowered = (message ?? "").toLowerCase();
-  return lowered.includes("database error saving new user") || lowered.includes("error saving new user");
+  return lowered.includes("database error saving new user") ||
+    lowered.includes("error saving new user");
 }
 
 function isEmailAlreadyInUse(message?: string | null) {
   const lowered = (message ?? "").toLowerCase();
-  return lowered.includes("already registered")
-    || lowered.includes("already exists")
-    || lowered.includes("already in use")
-    || lowered.includes("duplicate key")
-    || lowered.includes("unique constraint")
-    || lowered.includes("user already exists");
+  return lowered.includes("already registered") ||
+    lowered.includes("already exists") ||
+    lowered.includes("already in use") ||
+    lowered.includes("duplicate key") ||
+    lowered.includes("unique constraint") ||
+    lowered.includes("user already exists");
 }
 
 function isUnsupportedNativeAppleJWTAlgorithm(message?: string | null) {
@@ -142,8 +148,8 @@ function isUnsupportedNativeAppleJWTAlgorithm(message?: string | null) {
     return false;
   }
 
-  return lowered.includes("unsupported jwt algorithm")
-    || (lowered.includes("es256") && lowered.includes("jwt"));
+  return lowered.includes("unsupported jwt algorithm") ||
+    (lowered.includes("es256") && lowered.includes("jwt"));
 }
 
 async function ensureFreeSubscriptionStatus(
@@ -155,7 +161,10 @@ async function ensureFreeSubscriptionStatus(
     .eq("code", "free")
     .maybeSingle();
 
-  if (!selectError && existing && typeof existing === "object" && typeof (existing as Record<string, unknown>).id === "number") {
+  if (
+    !selectError && existing && typeof existing === "object" &&
+    typeof (existing as Record<string, unknown>).id === "number"
+  ) {
     return (existing as Record<string, unknown>).id as number;
   }
 
@@ -169,11 +178,17 @@ async function ensureFreeSubscriptionStatus(
     .maybeSingle();
 
   if (upsertError) {
-    console.warn("[auth/register] Unable to ensure free subscription status:", upsertError.message ?? "unknown error");
+    console.warn(
+      "[auth/register] Unable to ensure free subscription status:",
+      upsertError.message ?? "unknown error",
+    );
     return null;
   }
 
-  if (upserted && typeof upserted === "object" && typeof (upserted as Record<string, unknown>).id === "number") {
+  if (
+    upserted && typeof upserted === "object" &&
+    typeof (upserted as Record<string, unknown>).id === "number"
+  ) {
     return (upserted as Record<string, unknown>).id as number;
   }
 
@@ -183,7 +198,10 @@ async function ensureFreeSubscriptionStatus(
     .eq("code", "free")
     .maybeSingle();
 
-  if (fallback && typeof fallback === "object" && typeof (fallback as Record<string, unknown>).id === "number") {
+  if (
+    fallback && typeof fallback === "object" &&
+    typeof (fallback as Record<string, unknown>).id === "number"
+  ) {
     return (fallback as Record<string, unknown>).id as number;
   }
 
@@ -194,12 +212,12 @@ type SubscriptionStatusCode = "free" | "paid_monthly" | "paid_lifetime";
 
 function statusLabelForCode(code: SubscriptionStatusCode): string {
   switch (code) {
-  case "free":
-    return "Free";
-  case "paid_monthly":
-    return "Paid Monthly";
-  case "paid_lifetime":
-    return "Paid Lifetime";
+    case "free":
+      return "Free";
+    case "paid_monthly":
+      return "Paid Monthly";
+    case "paid_lifetime":
+      return "Paid Lifetime";
   }
 }
 
@@ -213,7 +231,10 @@ async function ensureSubscriptionStatusId(
     .eq("code", code)
     .maybeSingle();
 
-  if (!selectError && existing && typeof existing === "object" && typeof (existing as Record<string, unknown>).id === "number") {
+  if (
+    !selectError && existing && typeof existing === "object" &&
+    typeof (existing as Record<string, unknown>).id === "number"
+  ) {
     return (existing as Record<string, unknown>).id as number;
   }
 
@@ -227,11 +248,17 @@ async function ensureSubscriptionStatusId(
     .maybeSingle();
 
   if (upsertError) {
-    console.warn(`[auth/premium] Unable to ensure subscription status '${code}':`, upsertError.message ?? "unknown error");
+    console.warn(
+      `[auth/premium] Unable to ensure subscription status '${code}':`,
+      upsertError.message ?? "unknown error",
+    );
     return null;
   }
 
-  if (upserted && typeof upserted === "object" && typeof (upserted as Record<string, unknown>).id === "number") {
+  if (
+    upserted && typeof upserted === "object" &&
+    typeof (upserted as Record<string, unknown>).id === "number"
+  ) {
     return (upserted as Record<string, unknown>).id as number;
   }
 
@@ -241,27 +268,40 @@ async function ensureSubscriptionStatusId(
     .eq("code", code)
     .maybeSingle();
 
-  if (fallback && typeof fallback === "object" && typeof (fallback as Record<string, unknown>).id === "number") {
+  if (
+    fallback && typeof fallback === "object" &&
+    typeof (fallback as Record<string, unknown>).id === "number"
+  ) {
     return (fallback as Record<string, unknown>).id as number;
   }
 
   return null;
 }
 
-function inferPaidStatusCodeFromBody(body: UpdatePremiumBody): SubscriptionStatusCode {
+function inferPaidStatusCodeFromBody(
+  body: UpdatePremiumBody,
+): SubscriptionStatusCode {
   const rawTokens = [
     body.plan,
     body.productId,
     body.product_id,
   ]
-    .filter((value): value is string => typeof value === "string" && value.trim().length > 0)
+    .filter((value): value is string =>
+      typeof value === "string" && value.trim().length > 0
+    )
     .map((value) => normalizeStatusToken(value));
 
   for (const token of rawTokens) {
-    if (token.includes("monthly") || token.includes("mensuel") || token.includes("mois")) {
+    if (
+      token.includes("monthly") || token.includes("mensuel") ||
+      token.includes("mois")
+    ) {
       return "paid_monthly";
     }
-    if (token.includes("lifetime") || token.includes("a_vie") || token.includes("life_time")) {
+    if (
+      token.includes("lifetime") || token.includes("a_vie") ||
+      token.includes("life_time")
+    ) {
       return "paid_lifetime";
     }
     if (token === "paid_monthly" || token === "paid_lifetime") {
@@ -309,7 +349,8 @@ async function ensurePremiumEntitlementOwnership(
       return {
         ok: false,
         status: 500,
-        message: "Migration manquante: table premium_entitlement_claims absente.",
+        message:
+          "Migration manquante: table premium_entitlement_claims absente.",
       };
     }
     return {
@@ -319,8 +360,12 @@ async function ensurePremiumEntitlementOwnership(
     };
   }
 
-  const existingRow = (existing && typeof existing === "object") ? existing as Record<string, unknown> : null;
-  const existingOwnerId = typeof existingRow?.user_id === "string" ? existingRow.user_id : null;
+  const existingRow = (existing && typeof existing === "object")
+    ? existing as Record<string, unknown>
+    : null;
+  const existingOwnerId = typeof existingRow?.user_id === "string"
+    ? existingRow.user_id
+    : null;
 
   if (existingOwnerId && existingOwnerId !== params.userId) {
     return {
@@ -343,7 +388,8 @@ async function ensurePremiumEntitlementOwnership(
       return {
         ok: false,
         status: 500,
-        message: updateClaimError.message ?? "Failed to update the purchase-account link.",
+        message: updateClaimError.message ??
+          "Failed to update the purchase-account link.",
       };
     }
 
@@ -371,10 +417,12 @@ async function ensurePremiumEntitlementOwnership(
     .eq("transaction_id", params.transactionId)
     .maybeSingle();
   const afterOwnerId = (
-    afterInsert
-    && typeof afterInsert === "object"
-    && typeof (afterInsert as Record<string, unknown>).user_id === "string"
-  ) ? (afterInsert as Record<string, unknown>).user_id as string : null;
+      afterInsert &&
+      typeof afterInsert === "object" &&
+      typeof (afterInsert as Record<string, unknown>).user_id === "string"
+    )
+    ? (afterInsert as Record<string, unknown>).user_id as string
+    : null;
 
   if (afterOwnerId === params.userId) {
     return { ok: true };
@@ -390,7 +438,8 @@ async function ensurePremiumEntitlementOwnership(
   return {
     ok: false,
     status: 500,
-    message: insertClaimError.message ?? "Failed to create the purchase-account link.",
+    message: insertClaimError.message ??
+      "Failed to create the purchase-account link.",
   };
 }
 
@@ -443,7 +492,10 @@ async function ensureUserProfileRecord(
   }
 
   if (lastError) {
-    console.warn("[auth/register] Unable to ensure user profile row:", lastError);
+    console.warn(
+      "[auth/register] Unable to ensure user profile row:",
+      lastError,
+    );
   }
 }
 
@@ -479,7 +531,9 @@ function isAllowedRecoveryRedirect(raw: string): boolean {
   }
 
   const scheme = parsed.protocol.replace(":", "").toLowerCase();
-  const appScheme = (Deno.env.get("PARKSPOT_PASSWORD_RESET_APP_SCHEME") ?? "parkspot").toLowerCase();
+  const appScheme =
+    (Deno.env.get("PARKSPOT_PASSWORD_RESET_APP_SCHEME") ?? "parkspot")
+      .toLowerCase();
 
   if (scheme === appScheme) {
     return true;
@@ -489,10 +543,11 @@ function isAllowedRecoveryRedirect(raw: string): boolean {
     return false;
   }
 
-  const allowedHosts = (Deno.env.get("PARKSPOT_ALLOWED_RECOVERY_REDIRECT_HOSTS") ?? "")
-    .split(",")
-    .map((host) => host.trim().toLowerCase())
-    .filter((host) => host.length > 0);
+  const allowedHosts =
+    (Deno.env.get("PARKSPOT_ALLOWED_RECOVERY_REDIRECT_HOSTS") ?? "")
+      .split(",")
+      .map((host) => host.trim().toLowerCase())
+      .filter((host) => host.length > 0);
 
   if (!allowedHosts.length) {
     return true;
@@ -513,10 +568,10 @@ function isFreeLikeStatus(status: unknown): boolean {
   if (status && typeof status === "object") {
     const record = status as Record<string, unknown>;
     return isFreeLikeStatus(
-      record.code
-      ?? record.status
-      ?? record.value
-      ?? record.name,
+      record.code ??
+        record.status ??
+        record.value ??
+        record.name,
     );
   }
 
@@ -531,19 +586,19 @@ function isPremiumLikeStatus(status: unknown): boolean {
 
   if (typeof status === "string") {
     const normalized = normalizeStatusToken(status);
-    return normalized === "paid"
-      || normalized === "premium"
-      || normalized === "paid_monthly"
-      || normalized === "paid_lifetime";
+    return normalized === "paid" ||
+      normalized === "premium" ||
+      normalized === "paid_monthly" ||
+      normalized === "paid_lifetime";
   }
 
   if (status && typeof status === "object") {
     const record = status as Record<string, unknown>;
     return isPremiumLikeStatus(
-      record.code
-      ?? record.status
-      ?? record.value
-      ?? record.name,
+      record.code ??
+        record.status ??
+        record.value ??
+        record.name,
     );
   }
 
@@ -586,13 +641,18 @@ function coerceBoolean(value: unknown): boolean | null {
   if (typeof value === "string") {
     const normalized = value.trim().toLowerCase();
     if (["true", "t", "1", "yes", "y", "on"].includes(normalized)) return true;
-    if (["false", "f", "0", "no", "n", "off"].includes(normalized)) return false;
+    if (["false", "f", "0", "no", "n", "off"].includes(normalized)) {
+      return false;
+    }
   }
 
   return null;
 }
 
-function pickFirstRecordValue(record: Record<string, unknown> | null, keys: string[]): unknown {
+function pickFirstRecordValue(
+  record: Record<string, unknown> | null,
+  keys: string[],
+): unknown {
   if (!record) return null;
   for (const key of keys) {
     if (Object.prototype.hasOwnProperty.call(record, key)) {
@@ -744,7 +804,9 @@ async function resolveUserPremiumState(
       .eq("id", roleId)
       .maybeSingle();
 
-    const role = (roleRow && typeof roleRow === "object") ? (roleRow as Record<string, unknown>) : null;
+    const role = (roleRow && typeof roleRow === "object")
+      ? (roleRow as Record<string, unknown>)
+      : null;
     const adsEnabled = coerceBoolean(role?.ads_enabled);
     if (adsEnabled !== null) {
       return !adsEnabled;
@@ -756,7 +818,6 @@ async function resolveUserPremiumState(
       }
       return isPremiumLikeStatus(role.code);
     }
-
   }
 
   // Legacy fallback source: user_profiles.status_id
@@ -827,56 +888,61 @@ Deno.serve(async (req: Request) => {
   const pathname = url.pathname.replace(/\/+$/g, "").toLowerCase();
 
   let route = pathname;
-  if (route.startsWith("/functions/v1/auth")) route = route.slice("/functions/v1/auth".length);
-  else if (route.startsWith("/auth")) route = route.slice("/auth".length);
+  if (route.startsWith("/functions/v1/auth")) {
+    route = route.slice("/functions/v1/auth".length);
+  } else if (route.startsWith("/auth")) route = route.slice("/auth".length);
   if (!route) route = "/";
   if (!route.startsWith("/")) route = `/${route}`;
 
   try {
     const rawBody = req.method === "GET" ? "" : await req.text();
     const parsed = rawBody ? parseJson<Record<string, unknown>>(rawBody) : {};
-    const action = typeof parsed?.action === "string" ? parsed.action.toLowerCase() : "";
+    const action = typeof parsed?.action === "string"
+      ? parsed.action.toLowerCase()
+      : "";
 
     const routeKey = route === "/" ? action : route.slice(1);
-    console.log(`[auth] Request: ${req.method} ${url.pathname} -> route: ${route}, action: ${action}, routeKey: ${routeKey}`);
+    console.log(
+      `[auth] Request: ${req.method} ${url.pathname} -> route: ${route}, action: ${action}, routeKey: ${routeKey}`,
+    );
 
     const ip = getClientIp(req);
     const emailCandidate = (
       typeof parsed?.email === "string"
         ? parsed.email
         : typeof parsed?.newEmail === "string"
-          ? parsed.newEmail
-          : typeof parsed?.new_email === "string"
-            ? parsed.new_email
-            : ""
+        ? parsed.newEmail
+        : typeof parsed?.new_email === "string"
+        ? parsed.new_email
+        : ""
     ).trim().toLowerCase();
 
     const authRateRule = (() => {
       switch (routeKey) {
-      case "register":
-      case "register/confirm":
-      case "login":
-      case "apple":
-      case "recover":
-      case "recover/confirm-email":
-      case "email/confirm":
-        return {
-          limit: 8,
-          windowSeconds: 60,
-          key: `${ip}:${emailCandidate || "no-email"}:${routeKey}`,
-        };
-      case "refresh":
-        return {
-          limit: 20,
-          windowSeconds: 60,
-          key: `${ip}:${routeKey}`,
-        };
-      default:
-        return {
-          limit: 120,
-          windowSeconds: 60,
-          key: `${ip}:${routeKey || "root"}`,
-        };
+        case "register":
+        case "register/confirm":
+        case "login":
+        case "apple":
+        case "recover":
+        case "recover/confirm-email":
+        case "email/confirm":
+          return {
+            limit: 8,
+            windowSeconds: 60,
+            key: `${ip}:${emailCandidate || "no-email"}:${routeKey}`,
+          };
+        case "refresh":
+          return {
+            limit: 20,
+            windowSeconds: 60,
+            key: `${ip}:${routeKey}`,
+          };
+        default:
+          return {
+            limit: 120,
+            windowSeconds: 60,
+            key: `${ip}:${routeKey || "root"}`,
+          };
       }
     })();
 
@@ -895,7 +961,10 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    if (req.method === "POST" && (route === "/register" || (route === "/" && action === "register"))) {
+    if (
+      req.method === "POST" &&
+      (route === "/register" || (route === "/" && action === "register"))
+    ) {
       const body = parsed as RegisterBody;
       const displayName = body.displayName ?? body.display_name;
       const cleanDisplayName = displayName?.trim() ?? "";
@@ -906,10 +975,18 @@ Deno.serve(async (req: Request) => {
         return errorResponse("Champs obligatoires manquants.", 400, headers);
       }
       if (cleanDisplayName.length < 2 || cleanDisplayName.length > 80) {
-        return errorResponse("First name must contain between 2 and 80 characters.", 400, headers);
+        return errorResponse(
+          "First name must contain between 2 and 80 characters.",
+          400,
+          headers,
+        );
       }
       if (body.password.length < 8) {
-        return errorResponse("Password must contain at least 8 characters.", 400, headers);
+        return errorResponse(
+          "Password must contain at least 8 characters.",
+          400,
+          headers,
+        );
       }
       if (gdprConsent !== true) {
         return errorResponse("Consentement RGPD requis.", 400, headers);
@@ -919,7 +996,8 @@ Deno.serve(async (req: Request) => {
       const freeStatusId = await ensureFreeSubscriptionStatus(service);
 
       const anonClient = createAnonClient();
-      const emailRedirectTo = (Deno.env.get("PARKSPOT_AUTH_CALLBACK_URL") ?? "").trim();
+      const emailRedirectTo = (Deno.env.get("PARKSPOT_AUTH_CALLBACK_URL") ?? "")
+        .trim();
       const signUp = await anonClient.auth.signUp({
         email,
         password: body.password,
@@ -932,10 +1010,18 @@ Deno.serve(async (req: Request) => {
       if (signUp.error || !signUp.data.user) {
         const msg = signUp.error?.message ?? "Sign-up failed.";
         if (isRateLimited(msg)) {
-          return errorResponse("Too many sign-up attempts. Try again in a few minutes.", 429, headers);
+          return errorResponse(
+            "Too many sign-up attempts. Try again in a few minutes.",
+            429,
+            headers,
+          );
         }
         if ((msg ?? "").toLowerCase().includes("already registered")) {
-          return errorResponse("An account already exists with this email.", 409, headers);
+          return errorResponse(
+            "An account already exists with this email.",
+            409,
+            headers,
+          );
         }
         if (isDatabaseErrorSavingNewUser(msg)) {
           return errorResponse(
@@ -949,17 +1035,18 @@ Deno.serve(async (req: Request) => {
 
       // Profile creation is deferred until confirmation to avoid unverified records.
       if (!signUp.data.session) {
-          return jsonResponse(
-            {
-              requiresEmailConfirmation: true,
-              confirmationEmail: signUp.data.user.email ?? email,
-            },
-            {
-              status: 202,
-              message: "Account created. Check your email to confirm your sign-up.",
-              headers,
-            },
-          );
+        return jsonResponse(
+          {
+            requiresEmailConfirmation: true,
+            confirmationEmail: signUp.data.user.email ?? email,
+          },
+          {
+            status: 202,
+            message:
+              "Account created. Check your email to confirm your sign-up.",
+            headers,
+          },
+        );
       }
 
       await ensureUserProfileRecord(service, {
@@ -988,7 +1075,9 @@ Deno.serve(async (req: Request) => {
           user: {
             id: signUp.data.user.id,
             email: signUp.data.user.email ?? email,
-            displayName: (signUp.data.user.user_metadata?.display_name as string | undefined) ?? cleanDisplayName,
+            displayName: (signUp.data.user.user_metadata?.display_name as
+              | string
+              | undefined) ?? cleanDisplayName,
             isPremium,
             status: extractProfileStatus(profile),
             statusId: extractProfileStatusId(profile),
@@ -999,13 +1088,20 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    if (req.method === "DELETE" && (route === "/register" || (route === "/" && action === "register"))) {
+    if (
+      req.method === "DELETE" &&
+      (route === "/register" || (route === "/" && action === "register"))
+    ) {
       console.log(`[auth] DELETE /register for email: ${parsed?.email}`);
       const body = parsed as { email?: string };
       const email = body.email?.trim().toLowerCase() ?? "";
 
       if (!email) {
-        return errorResponse("Email requis pour annuler l'inscription.", 400, headers);
+        return errorResponse(
+          "Email requis pour annuler l'inscription.",
+          400,
+          headers,
+        );
       }
 
       const service = createServiceClient();
@@ -1022,7 +1118,11 @@ Deno.serve(async (req: Request) => {
       const userId = existingProfile.id;
       const { data: authUser } = await service.auth.admin.getUserById(userId);
       if (authUser?.user?.email_confirmed_at) {
-        return errorResponse("Impossible d'annuler une inscription déjà confirmée.", 403, headers);
+        return errorResponse(
+          "Impossible d'annuler une inscription déjà confirmée.",
+          403,
+          headers,
+        );
       }
 
       await service.from("parking_sessions").delete().eq("user_id", userId);
@@ -1057,8 +1157,13 @@ Deno.serve(async (req: Request) => {
 
       // Create the user profile upon successful confirmation if it doesn't exist yet.
       const freeStatusId = await ensureFreeSubscriptionStatus(service);
-      const metadata = (verify.data.user.user_metadata ?? {}) as Record<string, unknown>;
-      const displayNameFromMetadata = typeof metadata.display_name === "string" ? metadata.display_name : "Utilisateur";
+      const metadata = (verify.data.user.user_metadata ?? {}) as Record<
+        string,
+        unknown
+      >;
+      const displayNameFromMetadata = typeof metadata.display_name === "string"
+        ? metadata.display_name
+        : "Utilisateur";
 
       await ensureUserProfileRecord(service, {
         userId: verify.data.user.id,
@@ -1087,7 +1192,11 @@ Deno.serve(async (req: Request) => {
           user: {
             id: verify.data.user.id,
             email: verify.data.user.email ?? email,
-            displayName: extractProfileDisplayName(profile) ?? (verify.data.user.user_metadata?.display_name as string | undefined) ?? "Utilisateur",
+            displayName: extractProfileDisplayName(profile) ??
+              (verify.data.user.user_metadata?.display_name as
+                | string
+                | undefined) ??
+              "Utilisateur",
             isPremium,
             status: extractProfileStatus(profile),
             statusId: extractProfileStatusId(profile),
@@ -1098,7 +1207,10 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    if (req.method === "POST" && (route === "/login" || (route === "/" && action === "login"))) {
+    if (
+      req.method === "POST" &&
+      (route === "/login" || (route === "/" && action === "login"))
+    ) {
       const body = parsed as LoginBody;
       if (!body?.email || !body?.password) {
         return errorResponse("Email et mot de passe requis.", 400, headers);
@@ -1113,10 +1225,18 @@ Deno.serve(async (req: Request) => {
       if (login.error || !login.data.user || !login.data.session) {
         const msg = login.error?.message ?? "Sign-in failed.";
         if (isRateLimited(msg)) {
-          return errorResponse("Too many sign-in attempts. Try again in a few minutes.", 429, headers);
+          return errorResponse(
+            "Too many sign-in attempts. Try again in a few minutes.",
+            429,
+            headers,
+          );
         }
         if (isEmailNotConfirmed(msg)) {
-          return errorResponse("Email not confirmed. Check your inbox before signing in.", 401, headers);
+          return errorResponse(
+            "Email not confirmed. Check your inbox before signing in.",
+            401,
+            headers,
+          );
         }
         return errorResponse(msg, 401, headers);
       }
@@ -1141,7 +1261,11 @@ Deno.serve(async (req: Request) => {
           user: {
             id: login.data.user.id,
             email: login.data.user.email ?? body.email.trim().toLowerCase(),
-            displayName: extractProfileDisplayName(profile) ?? (login.data.user.user_metadata?.display_name as string | undefined) ?? "Utilisateur",
+            displayName: extractProfileDisplayName(profile) ??
+              (login.data.user.user_metadata?.display_name as
+                | string
+                | undefined) ??
+              "Utilisateur",
             isPremium,
             status: extractProfileStatus(profile),
             statusId: extractProfileStatusId(profile),
@@ -1154,7 +1278,8 @@ Deno.serve(async (req: Request) => {
 
     if (req.method === "POST" && route === "/apple") {
       const body = parsed as AppleSignInBody;
-      const idToken = (body.idToken ?? body.id_token ?? body.token ?? "").trim();
+      const idToken = (body.idToken ?? body.id_token ?? body.token ?? "")
+        .trim();
       const nonce = (body.nonce ?? "").trim();
 
       if (!idToken) {
@@ -1165,22 +1290,32 @@ Deno.serve(async (req: Request) => {
       }
 
       const supabaseUrl = Deno.env.get("SUPABASE_URL");
-      const resp = await fetch(`${supabaseUrl}/auth/v1/token?grant_type=id_token`, {
-        method: "POST",
-        headers: authHeaders(),
-        body: JSON.stringify({
-          provider: "apple",
-          id_token: idToken,
-          token: idToken,
-          nonce,
-        }),
-      });
+      const resp = await fetch(
+        `${supabaseUrl}/auth/v1/token?grant_type=id_token`,
+        {
+          method: "POST",
+          headers: authHeaders(),
+          body: JSON.stringify({
+            provider: "apple",
+            id_token: idToken,
+            token: idToken,
+            nonce,
+          }),
+        },
+      );
 
       const payload = await resp.json().catch(() => null);
       if (!resp.ok) {
-        const message = extractSupabaseMessage(payload, "Sign in with Apple failed.");
+        const message = extractSupabaseMessage(
+          payload,
+          "Sign in with Apple failed.",
+        );
         if (isRateLimited(message)) {
-          return errorResponse("Too many attempts. Try again in a few minutes.", 429, headers);
+          return errorResponse(
+            "Too many attempts. Try again in a few minutes.",
+            429,
+            headers,
+          );
         }
         if (isUnsupportedNativeAppleJWTAlgorithm(message)) {
           // Force the app onto the web OAuth fallback when Supabase rejects
@@ -1191,8 +1326,12 @@ Deno.serve(async (req: Request) => {
       }
 
       const session = payload as Record<string, unknown> | null;
-      const accessToken = typeof session?.access_token === "string" ? session.access_token : "";
-      const refreshToken = typeof session?.refresh_token === "string" ? session.refresh_token : "";
+      const accessToken = typeof session?.access_token === "string"
+        ? session.access_token
+        : "";
+      const refreshToken = typeof session?.refresh_token === "string"
+        ? session.refresh_token
+        : "";
 
       if (!accessToken) {
         return errorResponse("Invalid Apple response.", 502, headers);
@@ -1230,32 +1369,54 @@ Deno.serve(async (req: Request) => {
         .maybeSingle();
 
       if (profileError) {
-        return errorResponse(profileError.message ?? "Unable to verify the account.", 500, headers);
+        return errorResponse(
+          profileError.message ?? "Unable to verify the account.",
+          500,
+          headers,
+        );
       }
 
       if (!existingProfile) {
-        return errorResponse("Cette adresse e-mail n'est pas inscrite.", 400, headers);
+        return errorResponse(
+          "Cette adresse e-mail n'est pas inscrite.",
+          400,
+          headers,
+        );
       }
 
-      const { data: authUserResult, error: authUserError } = await service.auth.admin.getUserById(existingProfile.id);
+      const { data: authUserResult, error: authUserError } = await service.auth
+        .admin.getUserById(existingProfile.id);
       if (authUserError) {
-        return errorResponse(authUserError.message ?? "Unable to verify the account.", 500, headers);
+        return errorResponse(
+          authUserError.message ?? "Unable to verify the account.",
+          500,
+          headers,
+        );
       }
 
       const anonClient = createAnonClient();
 
       if (!authUserResult?.user?.email_confirmed_at) {
-        const confirmationRedirectTo = (Deno.env.get("PARKSPOT_AUTH_CALLBACK_URL") ?? "").trim() || redirectTo;
+        const confirmationRedirectTo =
+          (Deno.env.get("PARKSPOT_AUTH_CALLBACK_URL") ?? "").trim() ||
+          redirectTo;
         const resend = await anonClient.auth.resend({
           type: "signup",
           email,
-          options: confirmationRedirectTo ? { emailRedirectTo: confirmationRedirectTo } : undefined,
+          options: confirmationRedirectTo
+            ? { emailRedirectTo: confirmationRedirectTo }
+            : undefined,
         });
 
         if (resend.error) {
-          const msg = resend.error.message ?? "Failed to send the confirmation email.";
+          const msg = resend.error.message ??
+            "Failed to send the confirmation email.";
           if (isRateLimited(msg)) {
-            return errorResponse("Too many attempts. Try again in a few minutes.", 429, headers);
+            return errorResponse(
+              "Too many attempts. Try again in a few minutes.",
+              429,
+              headers,
+            );
           }
           return errorResponse(msg, 400, headers);
         }
@@ -1267,18 +1428,25 @@ Deno.serve(async (req: Request) => {
           },
           {
             status: 202,
-            message: "A confirmation code has been sent. Enter it in the app to receive the reset link.",
+            message:
+              "A confirmation code has been sent. Enter it in the app to receive the reset link.",
             headers,
           },
         );
       }
 
-      const reset = await anonClient.auth.resetPasswordForEmail(email, { redirectTo });
+      const reset = await anonClient.auth.resetPasswordForEmail(email, {
+        redirectTo,
+      });
 
       if (reset.error) {
         const msg = reset.error.message ?? "Failed to send the recovery link.";
         if (isRateLimited(msg)) {
-          return errorResponse("Too many attempts. Try again in a few minutes.", 429, headers);
+          return errorResponse(
+            "Too many attempts. Try again in a few minutes.",
+            429,
+            headers,
+          );
         }
         return errorResponse(msg, 400, headers);
       }
@@ -1322,16 +1490,26 @@ Deno.serve(async (req: Request) => {
       if (verify.error) {
         const msg = verify.error.message ?? "Code de confirmation invalide.";
         if (isRateLimited(msg)) {
-          return errorResponse("Too many attempts. Try again in a few minutes.", 429, headers);
+          return errorResponse(
+            "Too many attempts. Try again in a few minutes.",
+            429,
+            headers,
+          );
         }
         return errorResponse(msg, 400, headers);
       }
 
-      const reset = await anonClient.auth.resetPasswordForEmail(email, { redirectTo });
+      const reset = await anonClient.auth.resetPasswordForEmail(email, {
+        redirectTo,
+      });
       if (reset.error) {
         const msg = reset.error.message ?? "Failed to send the recovery link.";
         if (isRateLimited(msg)) {
-          return errorResponse("Too many attempts. Try again in a few minutes.", 429, headers);
+          return errorResponse(
+            "Too many attempts. Try again in a few minutes.",
+            429,
+            headers,
+          );
         }
         return errorResponse(msg, 400, headers);
       }
@@ -1393,16 +1571,24 @@ Deno.serve(async (req: Request) => {
         ? inferPaidStatusCodeFromBody(body)
         : "free";
       const statusId = await ensureSubscriptionStatusId(service, statusCode);
-      const incomingProductId = (typeof body.productId === "string" && body.productId.trim().length > 0)
-        ? body.productId.trim()
-        : (typeof body.product_id === "string" && body.product_id.trim().length > 0)
+      const incomingProductId =
+        (typeof body.productId === "string" && body.productId.trim().length > 0)
+          ? body.productId.trim()
+          : (typeof body.product_id === "string" &&
+              body.product_id.trim().length > 0)
           ? body.product_id.trim()
           : null;
 
       if (isPremium) {
-        const transactionId = normalizeTransactionID(body.transactionId ?? body.transaction_id);
+        const transactionId = normalizeTransactionID(
+          body.transactionId ?? body.transaction_id,
+        );
         if (!transactionId) {
-          return errorResponse("transactionId requis pour activer Premium.", 400, headers);
+          return errorResponse(
+            "transactionId requis pour activer Premium.",
+            400,
+            headers,
+          );
         }
 
         const ownership = await ensurePremiumEntitlementOwnership(service, {
@@ -1423,11 +1609,13 @@ Deno.serve(async (req: Request) => {
         patch.status_id = statusId;
       }
 
-      const userMetadata = (authResult.user.user_metadata ?? {}) as Record<string, unknown>;
-      const metadataDisplayName =
-        typeof userMetadata.display_name === "string"
-          ? userMetadata.display_name.trim()
-          : "";
+      const userMetadata = (authResult.user.user_metadata ?? {}) as Record<
+        string,
+        unknown
+      >;
+      const metadataDisplayName = typeof userMetadata.display_name === "string"
+        ? userMetadata.display_name.trim()
+        : "";
       const defaultDisplayName = metadataDisplayName || "Utilisateur";
       const freeStatusId = await ensureFreeSubscriptionStatus(service);
       await ensureUserProfileRecord(service, {
@@ -1447,7 +1635,9 @@ Deno.serve(async (req: Request) => {
         updated_at: patch.updated_at,
       };
 
-      if (updateError && Object.prototype.hasOwnProperty.call(patch, "status_id")) {
+      if (
+        updateError && Object.prototype.hasOwnProperty.call(patch, "status_id")
+      ) {
         // Compatibilité avec schémas où status_id n'est pas numérique (ex: uuid).
         const retryWithoutStatusId = await service
           .from("user_profiles")
@@ -1471,7 +1661,11 @@ Deno.serve(async (req: Request) => {
       }
 
       if (updateError) {
-        return errorResponse(updateError.message ?? "Failed to update premium status.", 500, headers);
+        return errorResponse(
+          updateError.message ?? "Failed to update premium status.",
+          500,
+          headers,
+        );
       }
 
       const { data: profile } = await service
@@ -1519,23 +1713,50 @@ Deno.serve(async (req: Request) => {
         unavailableTables.user_profiles = profileError.message ?? "Read failed";
       }
 
-      const parkingSessionsResult = await safeSelectByUserId(service, "parking_sessions", userId);
-      if (parkingSessionsResult.error) unavailableTables.parking_sessions = parkingSessionsResult.error;
+      const parkingSessionsResult = await safeSelectByUserId(
+        service,
+        "parking_sessions",
+        userId,
+      );
+      if (parkingSessionsResult.error) {
+        unavailableTables.parking_sessions = parkingSessionsResult.error;
+      }
 
-      const vehiclesResult = await safeSelectByUserId(service, "vehicles", userId);
-      if (vehiclesResult.error) unavailableTables.vehicles = vehiclesResult.error;
+      const vehiclesResult = await safeSelectByUserId(
+        service,
+        "vehicles",
+        userId,
+      );
+      if (vehiclesResult.error) {
+        unavailableTables.vehicles = vehiclesResult.error;
+      }
 
       const vehicleIds = (vehiclesResult.rows ?? [])
         .map((row: Record<string, unknown>) => row.id)
         .filter((id: unknown) => typeof id === "string") as string[];
 
-      const maintenanceItemsResult = await safeSelectByIds(service, "maintenance_items", "vehicle_id", vehicleIds);
-      if (maintenanceItemsResult.error) unavailableTables.maintenance_items = maintenanceItemsResult.error;
+      const maintenanceItemsResult = await safeSelectByIds(
+        service,
+        "maintenance_items",
+        "vehicle_id",
+        vehicleIds,
+      );
+      if (maintenanceItemsResult.error) {
+        unavailableTables.maintenance_items = maintenanceItemsResult.error;
+      }
 
-      const diagnosticsResult = await safeSelectByIds(service, "ai_diagnostics", "vehicle_id", vehicleIds);
-      if (diagnosticsResult.error) unavailableTables.ai_diagnostics = diagnosticsResult.error;
+      const diagnosticsResult = await safeSelectByIds(
+        service,
+        "ai_diagnostics",
+        "vehicle_id",
+        vehicleIds,
+      );
+      if (diagnosticsResult.error) {
+        unavailableTables.ai_diagnostics = diagnosticsResult.error;
+      }
 
-      const { data: authUserResult, error: authUserError } = await service.auth.admin.getUserById(userId);
+      const { data: authUserResult, error: authUserError } = await service.auth
+        .admin.getUserById(userId);
       if (authUserError) {
         unavailableTables.auth_user = authUserError.message ?? "Read failed";
       }
@@ -1548,9 +1769,12 @@ Deno.serve(async (req: Request) => {
           email: authResult.user.email ?? "",
           createdAt: authResult.user.created_at ?? null,
           lastSignInAt: authResult.user.last_sign_in_at ?? null,
-          appMetadata: authUserResult?.user?.app_metadata ?? authResult.user.app_metadata ?? {},
-          userMetadata: authUserResult?.user?.user_metadata ?? authResult.user.user_metadata ?? {},
-          emailConfirmedAt: authUserResult?.user?.email_confirmed_at ?? authResult.user.email_confirmed_at ?? null,
+          appMetadata: authUserResult?.user?.app_metadata ??
+            authResult.user.app_metadata ?? {},
+          userMetadata: authUserResult?.user?.user_metadata ??
+            authResult.user.user_metadata ?? {},
+          emailConfirmedAt: authUserResult?.user?.email_confirmed_at ??
+            authResult.user.email_confirmed_at ?? null,
           phone: authUserResult?.user?.phone ?? authResult.user.phone ?? null,
           role: authUserResult?.user?.role ?? authResult.user.role ?? null,
           identities: authUserResult?.user?.identities ?? [],
@@ -1580,23 +1804,31 @@ Deno.serve(async (req: Request) => {
 
     if (req.method === "PUT" && route === "/email") {
       const authResult = await requireUser(req);
-      if (!authResult.user || !authResult.token) return errorResponse("Unauthorized", 401, headers);
+      if (!authResult.user || !authResult.token) {
+        return errorResponse("Unauthorized", 401, headers);
+      }
 
       const body = parsed as UpdateEmailBody;
-      const newEmail = (body.newEmail ?? body.new_email ?? body.email ?? "").trim().toLowerCase();
+      const newEmail = (body.newEmail ?? body.new_email ?? body.email ?? "")
+        .trim().toLowerCase();
       if (!newEmail || !newEmail.includes("@") || !newEmail.includes(".")) {
         return errorResponse("Invalid email address.", 400, headers);
       }
 
       const currentEmail = (authResult.user.email ?? "").trim().toLowerCase();
       if (currentEmail && currentEmail === newEmail) {
-        return errorResponse("This email address is already the account email.", 400, headers);
+        return errorResponse(
+          "This email address is already the account email.",
+          400,
+          headers,
+        );
       }
 
-      const redirectFromBody = (body.redirectTo ?? body.redirect_to ?? "").trim();
-      const redirectTo = redirectFromBody
-        || (Deno.env.get("PARKSPOT_CHANGE_EMAIL_REDIRECT_URL") ?? "").trim()
-        || (Deno.env.get("PARKSPOT_AUTH_CALLBACK_URL") ?? "").trim();
+      const redirectFromBody = (body.redirectTo ?? body.redirect_to ?? "")
+        .trim();
+      const redirectTo = redirectFromBody ||
+        (Deno.env.get("PARKSPOT_CHANGE_EMAIL_REDIRECT_URL") ?? "").trim() ||
+        (Deno.env.get("PARKSPOT_AUTH_CALLBACK_URL") ?? "").trim();
 
       if (!redirectTo) {
         return errorResponse("URL de redirection manquante.", 400, headers);
@@ -1621,14 +1853,29 @@ Deno.serve(async (req: Request) => {
 
       if (!updateResp.ok) {
         const updatePayload = await updateResp.json().catch(() => null);
-        const msg = extractSupabaseMessage(updatePayload, "Email update failed.");
+        const msg = extractSupabaseMessage(
+          updatePayload,
+          "Email update failed.",
+        );
         if (isRateLimited(msg)) {
-          return errorResponse("Too many attempts. Try again in a few minutes.", 429, headers);
+          return errorResponse(
+            "Too many attempts. Try again in a few minutes.",
+            429,
+            headers,
+          );
         }
         if (isEmailAlreadyInUse(msg)) {
-          return errorResponse("Cette adresse e-mail est deja utilisee.", 409, headers);
+          return errorResponse(
+            "Cette adresse e-mail est deja utilisee.",
+            409,
+            headers,
+          );
         }
-        return errorResponse(msg, updateResp.status >= 500 ? 502 : 400, headers);
+        return errorResponse(
+          msg,
+          updateResp.status >= 500 ? 502 : 400,
+          headers,
+        );
       }
 
       return jsonResponse(
@@ -1640,7 +1887,8 @@ Deno.serve(async (req: Request) => {
         {
           status: 202,
           headers,
-          message: "Un code de confirmation a ete envoye a la nouvelle adresse. Saisis-le dans l'app pour finaliser le changement.",
+          message:
+            "Un code de confirmation a ete envoye a la nouvelle adresse. Saisis-le dans l'app pour finaliser le changement.",
         },
       );
     }
@@ -1650,7 +1898,8 @@ Deno.serve(async (req: Request) => {
       if (!authResult.user) return errorResponse("Unauthorized", 401, headers);
 
       const body = parsed as ConfirmEmailChangeBody;
-      const newEmail = (body.newEmail ?? body.new_email ?? body.email ?? "").trim().toLowerCase();
+      const newEmail = (body.newEmail ?? body.new_email ?? body.email ?? "")
+        .trim().toLowerCase();
       const code = (body.code ?? body.token ?? "").trim();
 
       if (!newEmail || !newEmail.includes("@") || !newEmail.includes(".")) {
@@ -1676,14 +1925,25 @@ Deno.serve(async (req: Request) => {
       if (verify.error) {
         const msg = verify.error.message ?? "Code de confirmation invalide.";
         if (isRateLimited(msg)) {
-          return errorResponse("Trop de tentatives. Reessaie dans quelques minutes.", 429, headers);
+          return errorResponse(
+            "Trop de tentatives. Reessaie dans quelques minutes.",
+            429,
+            headers,
+          );
         }
         return errorResponse(msg, 400, headers);
       }
 
       const verifiedUserId = verify.data?.user?.id;
-      if (typeof verifiedUserId === "string" && verifiedUserId !== authResult.user.id) {
-        return errorResponse("Ce code ne correspond pas a l'utilisateur connecte.", 403, headers);
+      if (
+        typeof verifiedUserId === "string" &&
+        verifiedUserId !== authResult.user.id
+      ) {
+        return errorResponse(
+          "Ce code ne correspond pas a l'utilisateur connecte.",
+          403,
+          headers,
+        );
       }
 
       const service = createServiceClient();
@@ -1691,21 +1951,30 @@ Deno.serve(async (req: Request) => {
       // Force finalization on the new email after OTP verification.
       // This intentionally bypasses any project-level "Secure email change"
       // requirement for validating the old email.
-      const { data: updatedAuthUser, error: forceUpdateError } = await service.auth.admin.updateUserById(authResult.user.id, {
-        email: newEmail,
-        email_confirm: true,
-      });
+      const { data: updatedAuthUser, error: forceUpdateError } = await service
+        .auth.admin.updateUserById(authResult.user.id, {
+          email: newEmail,
+          email_confirm: true,
+        });
 
       if (forceUpdateError) {
         const msg = forceUpdateError.message ?? "Email update failed.";
         if (isEmailAlreadyInUse(msg)) {
-          return errorResponse("Cette adresse e-mail est deja utilisee.", 409, headers);
+          return errorResponse(
+            "Cette adresse e-mail est deja utilisee.",
+            409,
+            headers,
+          );
         }
         return errorResponse(msg, 400, headers);
       }
 
       if (!updatedAuthUser?.user) {
-        return errorResponse("Verification du compte impossible (user missing).", 500, headers);
+        return errorResponse(
+          "Verification du compte impossible (user missing).",
+          500,
+          headers,
+        );
       }
 
       // Explicitly update the user profile email to ensure synchronization
@@ -1729,10 +1998,6 @@ Deno.serve(async (req: Request) => {
         extractProfileStatusId(profile),
       );
 
-      const resolvedEmail = (refreshedAuthUser.user.email ?? authResult.user.email ?? "")
-        .trim()
-        .toLowerCase();
-
       return jsonResponse(
         {
           ok: true,
@@ -1740,14 +2005,16 @@ Deno.serve(async (req: Request) => {
           user: {
             id: refreshedAuthUser.user.id,
             email: newEmail,
-            displayName:
-              extractProfileDisplayName(profile)
-              ?? (refreshedAuthUser.user.user_metadata?.display_name as string | undefined)
-              ?? "Utilisateur",
+            displayName: extractProfileDisplayName(profile) ??
+              (refreshedAuthUser.user.user_metadata?.display_name as
+                | string
+                | undefined) ??
+              "Utilisateur",
             isPremium,
             status: extractProfileStatus(profile),
             statusId: extractProfileStatusId(profile),
-            createdAt: refreshedAuthUser.user.created_at ?? new Date().toISOString(),
+            createdAt: refreshedAuthUser.user.created_at ??
+              new Date().toISOString(),
           },
         },
         {
@@ -1763,12 +2030,23 @@ Deno.serve(async (req: Request) => {
       if (!authResult.user) return errorResponse("Unauthorized", 401, headers);
 
       const body = parsed as UpdatePasswordBody;
-      const currentPassword = body.currentPassword ?? body.current_password ?? "";
+      const currentPassword = body.currentPassword ?? body.current_password ??
+        "";
       const newPassword = body.newPassword ?? body.new_password ?? "";
 
-      if (!currentPassword) return errorResponse("Veuillez renseigner le mot de passe actuel.", 400, headers);
+      if (!currentPassword) {
+        return errorResponse(
+          "Veuillez renseigner le mot de passe actuel.",
+          400,
+          headers,
+        );
+      }
       if (newPassword.length < 8) {
-        return errorResponse("The new password must contain at least 8 characters.", 400, headers);
+        return errorResponse(
+          "The new password must contain at least 8 characters.",
+          400,
+          headers,
+        );
       }
 
       const email = authResult.user.email ?? "";
@@ -1785,23 +2063,39 @@ Deno.serve(async (req: Request) => {
       }
 
       const service = createServiceClient();
-      const { error } = await service.auth.admin.updateUserById(authResult.user.id, {
-        password: newPassword,
-      });
+      const { error } = await service.auth.admin.updateUserById(
+        authResult.user.id,
+        {
+          password: newPassword,
+        },
+      );
 
-      if (error) return errorResponse(error.message ?? "Password update failed.", 400, headers);
+      if (error) {
+        return errorResponse(
+          error.message ?? "Password update failed.",
+          400,
+          headers,
+        );
+      }
       return jsonResponse({ ok: true }, { headers });
     }
 
     if (req.method === "PUT" && route === "/password/recovery") {
       const authResult = await requireUser(req);
-      if (!authResult.user || !authResult.token) return errorResponse("Unauthorized", 401, headers);
+      if (!authResult.user || !authResult.token) {
+        return errorResponse("Unauthorized", 401, headers);
+      }
 
       const body = parsed as RecoveryPasswordBody;
-      const nextPassword = (body.newPassword ?? body.new_password ?? body.password ?? "").trim();
+      const nextPassword =
+        (body.newPassword ?? body.new_password ?? body.password ?? "").trim();
 
       if (nextPassword.length < 8) {
-        return errorResponse("The new password must contain at least 8 characters.", 400, headers);
+        return errorResponse(
+          "The new password must contain at least 8 characters.",
+          400,
+          headers,
+        );
       }
 
       const supabaseUrl = Deno.env.get("SUPABASE_URL");
@@ -1816,7 +2110,10 @@ Deno.serve(async (req: Request) => {
 
       const payload = await resp.json().catch(() => null);
       if (!resp.ok) {
-        const message = extractSupabaseMessage(payload, "Password update failed.");
+        const message = extractSupabaseMessage(
+          payload,
+          "Password update failed.",
+        );
         if (resp.status === 401) {
           return errorResponse("Unauthorized", 401, headers);
         }
@@ -1831,18 +2128,29 @@ Deno.serve(async (req: Request) => {
       if (!authResult.user) return errorResponse("Unauthorized", 401, headers);
 
       const body = parsed as UpdateProfileBody;
-      const nextDisplayName = (body.displayName ?? body.display_name ?? body.name ?? "")
-        .trim();
+      const nextDisplayName =
+        (body.displayName ?? body.display_name ?? body.name ?? "")
+          .trim();
 
-      if (!nextDisplayName || nextDisplayName.length < 2 || nextDisplayName.length > 80) {
-        return errorResponse("Invalid display name (2 to 80 characters).", 400, headers);
+      if (
+        !nextDisplayName || nextDisplayName.length < 2 ||
+        nextDisplayName.length > 80
+      ) {
+        return errorResponse(
+          "Invalid display name (2 to 80 characters).",
+          400,
+          headers,
+        );
       }
 
       const service = createServiceClient();
 
       const { error: profileError } = await service
         .from("user_profiles")
-        .update({ display_name: nextDisplayName, updated_at: new Date().toISOString() })
+        .update({
+          display_name: nextDisplayName,
+          updated_at: new Date().toISOString(),
+        })
         .eq("id", authResult.user.id);
 
       if (profileError) {
@@ -1883,7 +2191,10 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    if (req.method === "POST" && (route === "/refresh" || (route === "/" && action === "refresh"))) {
+    if (
+      req.method === "POST" &&
+      (route === "/refresh" || (route === "/" && action === "refresh"))
+    ) {
       const body = parsed as RefreshBody;
       const refreshToken = body.refreshToken ?? body.refresh_token;
       if (!refreshToken) {
@@ -1891,11 +2202,14 @@ Deno.serve(async (req: Request) => {
       }
 
       const supabaseUrl = Deno.env.get("SUPABASE_URL");
-      const resp = await fetch(`${supabaseUrl}/auth/v1/token?grant_type=refresh_token`, {
-        method: "POST",
-        headers: authHeaders(),
-        body: JSON.stringify({ refresh_token: refreshToken }),
-      });
+      const resp = await fetch(
+        `${supabaseUrl}/auth/v1/token?grant_type=refresh_token`,
+        {
+          method: "POST",
+          headers: authHeaders(),
+          body: JSON.stringify({ refresh_token: refreshToken }),
+        },
+      );
 
       if (!resp.ok) return errorResponse("Refresh failed.", 401, headers);
       const session = await resp.json() as RefreshSessionPayload;
@@ -1963,6 +2277,10 @@ Deno.serve(async (req: Request) => {
 
     return errorResponse("Route not found.", 404, headers);
   } catch (e) {
-    return errorResponse(`Erreur serveur: ${e instanceof Error ? e.message : "unknown"}`, 500, headers);
+    return errorResponse(
+      `Erreur serveur: ${e instanceof Error ? e.message : "unknown"}`,
+      500,
+      headers,
+    );
   }
 });

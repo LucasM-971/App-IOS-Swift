@@ -1,7 +1,10 @@
 /// <reference path="./deno-shim.d.ts" />
 /// <reference path="./supabase-js-shim.d.ts" />
 
-import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2.49.1";
+import {
+  createClient,
+  type SupabaseClient,
+} from "npm:@supabase/supabase-js@2.49.1";
 
 function requireEnv(name: string): string {
   const value = Deno.env.get(name);
