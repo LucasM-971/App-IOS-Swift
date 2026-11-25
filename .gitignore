@@ -1,0 +1,99 @@
+# ============================================================
+# Secrets & configuration locale (NE JAMAIS COMMITER)
+# ============================================================
+# xcconfig de secrets locaux (seul Secrets.example.xcconfig est versionné)
+Config/Secrets.xcconfig
+Config/*.local.xcconfig
+*.secrets.xcconfig
+
+# Variables d'environnement (app, scripts, Supabase Edge Functions)
+.env
+.env.*
+!.env.example
+**/supabase/.env
+**/supabase/functions/.env
+**/supabase/functions/**/.env
+
+# Fichiers de clés / identifiants génériques
+*secret*.json
+*credentials*.json
+service-account*.json
+*.secrets
+secrets/
+
+# Firebase / Google
+GoogleService-Info.plist
+google-services.json
+
+# ============================================================
+# Signature Apple, certificats & clés
+# ============================================================
+*.p8
+*.p12
+*.pfx
+*.pem
+*.key
+*.cer
+*.certSigningRequest
+*.mobileprovision
+*.provisionprofile
+AuthKey_*.p8
+ExportOptions.plist
+
+# Fastlane (contient souvent des identifiants App Store Connect)
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/
+fastlane/test_output/
+fastlane/.env*
+fastlane/api_key.json
+
+# ============================================================
+# Produits de build & archives (peuvent contenir symboles / binaires)
+# ============================================================
+build/
+DerivedData/
+.build/
+*.xcarchive
+*.ipa
+*.dSYM/
+*.dSYM.zip
+*.app.dSYM.zip
+
+# ============================================================
+# Données utilisateur / outils locaux
+# ============================================================
+# Xcode
+*.xcuserstate
+**/xcuserdata/
+*.xcscmblueprint
+*.xccheckout
+
+# Claude Code : permissions locales
+.claude/settings.local.json
+
+# Éditeurs
+.vscode/
+.idea/
+
+# Supabase CLI (référence projet, URL pooler, versions…)
+**/supabase/.temp/
+**/supabase/.branches/
+
+# Logs & crash reports
+*.log
+*.crash
+*.ips
+
+# ============================================================
+# Divers
+# ============================================================
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+
+# Node / Deno
+node_modules/

@@ -1,0 +1,885 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A08AE8282F7F4CA800936135 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A08AE8272F7F4CA700936135 /* StoreKit.framework */; };
+		C1A1B1C42F70010000A10001 /* ParkSpotWidgets.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = C1A1B1D12F70010000A10001 /* ParkSpotWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A08F0E662F66DAF600D12033 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A08F0E4E2F66DAF400D12033 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A08F0E552F66DAF400D12033;
+			remoteInfo = ParkSpot;
+		};
+		A08F0E702F66DAF600D12033 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A08F0E4E2F66DAF400D12033 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A08F0E552F66DAF400D12033;
+			remoteInfo = ParkSpot;
+		};
+		C1A1B2052F70010000A10001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A08F0E4E2F66DAF400D12033 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C1A1B1F12F70010000A10001;
+			remoteInfo = ParkSpotWidgets;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		C1A1B2012F70010000A10001 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				C1A1B1C42F70010000A10001 /* ParkSpotWidgets.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		A08AE8272F7F4CA700936135 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		A08F0E562F66DAF400D12033 /* ParkSpot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ParkSpot.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A08F0E652F66DAF600D12033 /* ParkSpotTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ParkSpotTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A08F0E6F2F66DAF600D12033 /* ParkSpotUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ParkSpotUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B2C400012A10000100AAA001 /* AppSecrets.base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AppSecrets.base.xcconfig; sourceTree = "<group>"; };
+		B2C400022A10000100AAA001 /* Secrets.example.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.example.xcconfig; sourceTree = "<group>"; };
+		C1A1B1D12F70010000A10001 /* ParkSpotWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ParkSpotWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		A0B7565C2F7A539E00D9D04A /* Exceptions for "ParkSpot" folder in "ParkSpot" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Resources/Info.plist,
+			);
+			target = A08F0E552F66DAF400D12033 /* ParkSpot */;
+		};
+		AAA100112FE0000100AAA001 /* Exceptions for "ParkSpotWidgets" folder in "ParkSpotWidgets" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = C1A1B1F12F70010000A10001 /* ParkSpotWidgets */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		A08F0E582F66DAF400D12033 /* ParkSpot */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				A0B7565C2F7A539E00D9D04A,
+			);
+			path = ParkSpot;
+			sourceTree = "<group>";
+		};
+		AAA100012FE0000100AAA001 /* Shared */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		AAA100022FE0000100AAA001 /* ParkSpotWidgets */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				AAA100112FE0000100AAA001,
+			);
+			path = ParkSpotWidgets;
+			sourceTree = "<group>";
+		};
+		AAA100032FE0000100AAA001 /* ParkSpotTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ParkSpotTests;
+			sourceTree = "<group>";
+		};
+		AAA100042FE0000100AAA001 /* ParkSpotUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ParkSpotUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A08F0E532F66DAF400D12033 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A08AE8282F7F4CA800936135 /* StoreKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A08F0E622F66DAF600D12033 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A08F0E6C2F66DAF600D12033 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C1A1B2032F70010000A10001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A08AE8262F7F4CA700936135 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A08AE8272F7F4CA700936135 /* StoreKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A08F0E4D2F66DAF400D12033 = {
+			isa = PBXGroup;
+			children = (
+				A08F0E582F66DAF400D12033 /* ParkSpot */,
+				AAA100012FE0000100AAA001 /* Shared */,
+				AAA100022FE0000100AAA001 /* ParkSpotWidgets */,
+				AAA100032FE0000100AAA001 /* ParkSpotTests */,
+				AAA100042FE0000100AAA001 /* ParkSpotUITests */,
+				A08F0EE82F66DB8200D12033 /* Config */,
+				A08F0E572F66DAF400D12033 /* Products */,
+				A08AE8262F7F4CA700936135 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		A08F0E572F66DAF400D12033 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A08F0E562F66DAF400D12033 /* ParkSpot.app */,
+				C1A1B1D12F70010000A10001 /* ParkSpotWidgets.appex */,
+				A08F0E652F66DAF600D12033 /* ParkSpotTests.xctest */,
+				A08F0E6F2F66DAF600D12033 /* ParkSpotUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A08F0EE82F66DB8200D12033 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				B2C400012A10000100AAA001 /* AppSecrets.base.xcconfig */,
+				B2C400022A10000100AAA001 /* Secrets.example.xcconfig */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A08F0E552F66DAF400D12033 /* ParkSpot */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A08F0E792F66DAF600D12033 /* Build configuration list for PBXNativeTarget "ParkSpot" */;
+			buildPhases = (
+				A08F0E522F66DAF400D12033 /* Sources */,
+				A08F0E532F66DAF400D12033 /* Frameworks */,
+				A08F0E542F66DAF400D12033 /* Resources */,
+				C1A1B2012F70010000A10001 /* Embed App Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C1A1B2062F70010000A10001 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				A08F0E582F66DAF400D12033 /* ParkSpot */,
+				AAA100012FE0000100AAA001 /* Shared */,
+			);
+			name = ParkSpot;
+			packageProductDependencies = (
+			);
+			productName = ParkSpot;
+			productReference = A08F0E562F66DAF400D12033 /* ParkSpot.app */;
+			productType = "com.apple.product-type.application";
+		};
+		A08F0E642F66DAF600D12033 /* ParkSpotTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A08F0E7C2F66DAF600D12033 /* Build configuration list for PBXNativeTarget "ParkSpotTests" */;
+			buildPhases = (
+				A08F0E612F66DAF600D12033 /* Sources */,
+				A08F0E622F66DAF600D12033 /* Frameworks */,
+				A08F0E632F66DAF600D12033 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A08F0E672F66DAF600D12033 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				AAA100032FE0000100AAA001 /* ParkSpotTests */,
+			);
+			name = ParkSpotTests;
+			packageProductDependencies = (
+			);
+			productName = ParkSpotTests;
+			productReference = A08F0E652F66DAF600D12033 /* ParkSpotTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		A08F0E6E2F66DAF600D12033 /* ParkSpotUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A08F0E7F2F66DAF600D12033 /* Build configuration list for PBXNativeTarget "ParkSpotUITests" */;
+			buildPhases = (
+				A08F0E6B2F66DAF600D12033 /* Sources */,
+				A08F0E6C2F66DAF600D12033 /* Frameworks */,
+				A08F0E6D2F66DAF600D12033 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A08F0E712F66DAF600D12033 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				AAA100042FE0000100AAA001 /* ParkSpotUITests */,
+			);
+			name = ParkSpotUITests;
+			packageProductDependencies = (
+			);
+			productName = ParkSpotUITests;
+			productReference = A08F0E6F2F66DAF600D12033 /* ParkSpotUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		C1A1B1F12F70010000A10001 /* ParkSpotWidgets */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C1A1B2092F70010000A10001 /* Build configuration list for PBXNativeTarget "ParkSpotWidgets" */;
+			buildPhases = (
+				C1A1B2022F70010000A10001 /* Sources */,
+				C1A1B2032F70010000A10001 /* Frameworks */,
+				C1A1B2042F70010000A10001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				AAA100022FE0000100AAA001 /* ParkSpotWidgets */,
+				AAA100012FE0000100AAA001 /* Shared */,
+			);
+			name = ParkSpotWidgets;
+			packageProductDependencies = (
+			);
+			productName = ParkSpotWidgets;
+			productReference = C1A1B1D12F70010000A10001 /* ParkSpotWidgets.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A08F0E4E2F66DAF400D12033 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2630;
+				LastUpgradeCheck = 2630;
+				TargetAttributes = {
+					A08F0E552F66DAF400D12033 = {
+						CreatedOnToolsVersion = 26.3;
+						SystemCapabilities = {
+							com.apple.InAppPurchase = {
+								enabled = 1;
+							};
+						};
+					};
+					A08F0E642F66DAF600D12033 = {
+						CreatedOnToolsVersion = 26.3;
+						LastSwiftMigration = 2630;
+						TestTargetID = A08F0E552F66DAF400D12033;
+					};
+					A08F0E6E2F66DAF600D12033 = {
+						CreatedOnToolsVersion = 26.3;
+						LastSwiftMigration = 2630;
+						TestTargetID = A08F0E552F66DAF400D12033;
+					};
+					C1A1B1F12F70010000A10001 = {
+						CreatedOnToolsVersion = 26.3;
+					};
+				};
+			};
+			buildConfigurationList = A08F0E512F66DAF400D12033 /* Build configuration list for PBXProject "ParkSpot" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+				fr,
+				es,
+				de,
+			);
+			mainGroup = A08F0E4D2F66DAF400D12033;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = A08F0E572F66DAF400D12033 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A08F0E552F66DAF400D12033 /* ParkSpot */,
+				C1A1B1F12F70010000A10001 /* ParkSpotWidgets */,
+				A08F0E642F66DAF600D12033 /* ParkSpotTests */,
+				A08F0E6E2F66DAF600D12033 /* ParkSpotUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A08F0E542F66DAF400D12033 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A08F0E632F66DAF600D12033 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A08F0E6D2F66DAF600D12033 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C1A1B2042F70010000A10001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A08F0E522F66DAF400D12033 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A08F0E612F66DAF600D12033 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A08F0E6B2F66DAF600D12033 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C1A1B2022F70010000A10001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A08F0E672F66DAF600D12033 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A08F0E552F66DAF400D12033 /* ParkSpot */;
+			targetProxy = A08F0E662F66DAF600D12033 /* PBXContainerItemProxy */;
+		};
+		A08F0E712F66DAF600D12033 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A08F0E552F66DAF400D12033 /* ParkSpot */;
+			targetProxy = A08F0E702F66DAF600D12033 /* PBXContainerItemProxy */;
+		};
+		C1A1B2062F70010000A10001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C1A1B1F12F70010000A10001 /* ParkSpotWidgets */;
+			targetProxy = C1A1B2052F70010000A10001 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		A08F0E772F66DAF600D12033 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		A08F0E782F66DAF600D12033 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		A08F0E7A2F66DAF600D12033 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B2C400012A10000100AAA001 /* AppSecrets.base.xcconfig */;
+			buildSettings = {
+				APS_ENVIRONMENT = development;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = ParkSpot/Resources/ParkSpot.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 14;
+				DEVELOPMENT_TEAM = QQWWBX68W6;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ParkSpot/Resources/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = MosiMap;
+				INFOPLIST_KEY_CFBundleURLTypes = "({CFBundleURLName=parkspot.oauth;CFBundleURLSchemes=($(PARKSPOT_OAUTH_CALLBACK_SCHEME));})";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.navigation";
+				INFOPLIST_KEY_NSBluetoothAlwaysAndWhenInUseUsageDescription = "MosiMap utilise le Bluetooth pour détecter automatiquement la déconnexion de votre voiture.";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "MosiMap uses Bluetooth to automatically detect when your car disconnects.";
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "MosiMap uses Bluetooth to improve nearby vehicle detection.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "MosiMap uses the camera to allow you to add a photo of your parking space.";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "MosiMap may use your local network to improve nearby positioning when this feature is enabled.";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "MosiMap uses your location in the background to automatically detect parking and guide you back to your vehicle.";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "MosiMap uses your location in the background to automatically detect parking and guide you back to your vehicle.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "MosiMap uses your location to save and find your parked car.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "MosiMap uses motion data to improve automatic parking detection.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "MosiMap a besoin d'accéder à votre galerie pour choisir votre photo de profil.";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
+				INFOPLIST_KEY_PARKSPOT_API_URL = "$(PARKSPOT_API_URL)";
+				INFOPLIST_KEY_PARKSPOT_OAUTH_CALLBACK_SCHEME = "$(PARKSPOT_OAUTH_CALLBACK_SCHEME)";
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = NO;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = NO;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				INFOPLIST_KEY_UIBackgroundModes = location;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tonprenom.parkspot.ParkSpot;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = auto;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				XROS_DEPLOYMENT_TARGET = 26.2;
+			};
+			name = Debug;
+		};
+		A08F0E7B2F66DAF600D12033 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B2C400012A10000100AAA001 /* AppSecrets.base.xcconfig */;
+			buildSettings = {
+				APS_ENVIRONMENT = production;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = ParkSpot/Resources/ParkSpot.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 14;
+				DEVELOPMENT_TEAM = QQWWBX68W6;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ParkSpot/Resources/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = MosiMap;
+				INFOPLIST_KEY_CFBundleURLTypes = "({CFBundleURLName=parkspot.oauth;CFBundleURLSchemes=($(PARKSPOT_OAUTH_CALLBACK_SCHEME));})";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.navigation";
+				INFOPLIST_KEY_NSBluetoothAlwaysAndWhenInUseUsageDescription = "MosiMap utilise le Bluetooth pour détecter automatiquement la déconnexion de votre voiture.";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "MosiMap uses Bluetooth to automatically detect when your car disconnects.";
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "MosiMap uses Bluetooth to improve nearby vehicle detection.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "MosiMap uses the camera to allow you to add a photo of your parking space.";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "MosiMap may use your local network to improve nearby positioning when this feature is enabled.";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "MosiMap uses your location in the background to automatically detect parking and guide you back to your vehicle.";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "MosiMap uses your location in the background to automatically detect parking and guide you back to your vehicle.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "MosiMap uses your location to save and find your parked car.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "MosiMap uses motion data to improve automatic parking detection.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "MosiMap a besoin d'accéder à votre galerie pour choisir votre photo de profil.";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
+				INFOPLIST_KEY_PARKSPOT_API_URL = "$(PARKSPOT_API_URL)";
+				INFOPLIST_KEY_PARKSPOT_OAUTH_CALLBACK_SCHEME = "$(PARKSPOT_OAUTH_CALLBACK_SCHEME)";
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = NO;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = NO;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				INFOPLIST_KEY_UIBackgroundModes = location;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tonprenom.parkspot.ParkSpot;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = auto;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				XROS_DEPLOYMENT_TARGET = 26.2;
+			};
+			name = Release;
+		};
+		A08F0E7D2F66DAF600D12033 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 14;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				MACOSX_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tonprenom.parkspot.ParkSpotTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ParkSpot.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ParkSpot";
+				XROS_DEPLOYMENT_TARGET = 26.2;
+			};
+			name = Debug;
+		};
+		A08F0E7E2F66DAF600D12033 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 14;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				MACOSX_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tonprenom.parkspot.ParkSpotTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ParkSpot.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ParkSpot";
+				XROS_DEPLOYMENT_TARGET = 26.2;
+			};
+			name = Release;
+		};
+		A08F0E802F66DAF600D12033 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 14;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				MACOSX_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tonprenom.parkspot.ParkSpotUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_TARGET_NAME = ParkSpot;
+				XROS_DEPLOYMENT_TARGET = 26.2;
+			};
+			name = Debug;
+		};
+		A08F0E812F66DAF600D12033 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 14;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				MACOSX_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tonprenom.parkspot.ParkSpotUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_TARGET_NAME = ParkSpot;
+				XROS_DEPLOYMENT_TARGET = 26.2;
+			};
+			name = Release;
+		};
+		C1A1B2072F70010000A10001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = ParkSpotWidgets/ParkSpotWidgets.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 14;
+				DEVELOPMENT_TEAM = QQWWBX68W6;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = ParkSpotWidgets/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tonprenom.parkspot.ParkSpot.ParkSpotWidgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator watchos watchsimulator";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,4";
+				WATCHOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Debug;
+		};
+		C1A1B2082F70010000A10001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = ParkSpotWidgets/ParkSpotWidgets.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 14;
+				DEVELOPMENT_TEAM = QQWWBX68W6;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = ParkSpotWidgets/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tonprenom.parkspot.ParkSpot.ParkSpotWidgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator watchos watchsimulator";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,4";
+				WATCHOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A08F0E512F66DAF400D12033 /* Build configuration list for PBXProject "ParkSpot" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A08F0E772F66DAF600D12033 /* Debug */,
+				A08F0E782F66DAF600D12033 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A08F0E792F66DAF600D12033 /* Build configuration list for PBXNativeTarget "ParkSpot" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A08F0E7A2F66DAF600D12033 /* Debug */,
+				A08F0E7B2F66DAF600D12033 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A08F0E7C2F66DAF600D12033 /* Build configuration list for PBXNativeTarget "ParkSpotTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A08F0E7D2F66DAF600D12033 /* Debug */,
+				A08F0E7E2F66DAF600D12033 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A08F0E7F2F66DAF600D12033 /* Build configuration list for PBXNativeTarget "ParkSpotUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A08F0E802F66DAF600D12033 /* Debug */,
+				A08F0E812F66DAF600D12033 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C1A1B2092F70010000A10001 /* Build configuration list for PBXNativeTarget "ParkSpotWidgets" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C1A1B2072F70010000A10001 /* Debug */,
+				C1A1B2082F70010000A10001 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A08F0E4E2F66DAF400D12033 /* Project object */;
+}

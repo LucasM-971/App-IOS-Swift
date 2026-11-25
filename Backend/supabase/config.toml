@@ -1,0 +1,24 @@
+[functions.auth]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/auth/index.ts"
+
+[functions.parking]
+enabled = true
+verify_jwt = true
+entrypoint = "./functions/parking/index.ts"
+
+[functions.history]
+enabled = true
+verify_jwt = true
+entrypoint = "./functions/history/index.ts"
+
+[functions.frequent-zones]
+enabled = true
+verify_jwt = true
+entrypoint = "./functions/frequent-zones/index.ts"
+
+[functions.users]
+enabled = true
+verify_jwt = true
+entrypoint = "./functions/users/index.ts"

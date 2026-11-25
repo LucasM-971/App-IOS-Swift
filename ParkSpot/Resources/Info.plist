@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>$(PARKSPOT_OAUTH_CALLBACK_SCHEME)</string>
+			</array>
+		</dict>
+	</array>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>MosiMap uses background location to help detect your parking spot and send parking session reminders, even when the app is closed.</string>
+	<key>NSBluetoothAlwaysAndWhenInUseUsageDescription</key>
+	<string>MosiMap uses Bluetooth to improve nearby vehicle detection.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>MosiMap uses your location to save and find your parked car.</string>
+	<key>NSLocationTemporaryUsageDescriptionDictionary</key>
+	<dict>
+		<key>ParkingSavePrecision</key>
+		<string>MosiMap needs your precise location to save your parked car at the right spot.</string>
+	</dict>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_parkspot._tcp</string>
+	</array>
+	<key>PARKSPOT_API_URL</key>
+	<string>$(PARKSPOT_API_URL)</string>
+	<key>PARKSPOT_OAUTH_CALLBACK_SCHEME</key>
+	<string>$(PARKSPOT_OAUTH_CALLBACK_SCHEME)</string>
+	<key>PARKSPOT_PASSWORD_RESET_REDIRECT_URL</key>
+	<string>$(PARKSPOT_PASSWORD_RESET_REDIRECT_URL)</string>
+	<key>PARKSPOT_CHANGE_EMAIL_REDIRECT_URL</key>
+	<string>$(PARKSPOT_CHANGE_EMAIL_REDIRECT_URL)</string>
+	<key>PARKSPOT_PRIVACY_POLICY_URL</key>
+	<string>$(PARKSPOT_PRIVACY_POLICY_URL)</string>
+	<key>PARKSPOT_TERMS_URL</key>
+	<string>$(PARKSPOT_TERMS_URL)</string>
+	<key>PARKSPOT_DATA_REQUEST_EMAIL</key>
+	<string>$(PARKSPOT_DATA_REQUEST_EMAIL)</string>
+	<key>PARKSPOT_SUPPORT_EMAIL</key>
+	<string>$(PARKSPOT_SUPPORT_EMAIL)</string>
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<true/>
+		<key>UISceneConfigurations</key>
+		<dict>
+			<key>CPTemplateApplicationSceneSessionRoleApplication</key>
+			<array>
+				<dict>
+					<key>UISceneClassName</key>
+					<string>CPTemplateApplicationScene</string>
+					<key>UISceneConfigurationName</key>
+					<string>CarPlay Configuration</string>
+					<key>UISceneDelegateClassName</key>
+					<string>$(PRODUCT_MODULE_NAME).CarPlaySceneDelegate</string>
+				</dict>
+			</array>
+		</dict>
+	</dict>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+		<string>remote-notification</string>
+	</array>
+</dict>
+</plist>

@@ -1,0 +1,111 @@
+name: iOS CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  quality-checks:
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Secret scan
+        run: ./scripts/secret_scan.sh
+
+      - name: Deno format check
+        run: deno fmt --check Backend/supabase/functions
+
+      - name: Deno lint
+        run: deno lint Backend/supabase/functions
+
+      - name: Auth e2e smoke test (optional)
+        run: deno test --allow-net --allow-env Backend/supabase/functions/auth/auth.e2e.test.ts
+
+  build-and-test:
+    runs-on: macos-15
+    strategy:
+      fail-fast: false
+      matrix:
+        destination:
+          - "platform=iOS Simulator,OS=latest,name=iPhone 17 Pro"
+          - "platform=iOS Simulator,OS=latest,name=iPhone 17e"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -switch /Applications/Xcode.app
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Build (simulator, unsigned)
+        run: |
+          xcodebuild \
+            -project ParkSpot.xcodeproj \
+            -scheme ParkSpot \
+            -sdk iphonesimulator \
+            -destination '${{ matrix.destination }}' \
+            CODE_SIGNING_ALLOWED=NO \
+            clean build
+
+      - name: Run unit tests
+        run: |
+          xcodebuild \
+            -project ParkSpot.xcodeproj \
+            -scheme ParkSpot \
+            -sdk iphonesimulator \
+            -destination '${{ matrix.destination }}' \
+            -enableCodeCoverage YES \
+            -resultBundlePath TestResults.xcresult \
+            CODE_SIGNING_ALLOWED=NO \
+            test
+
+      - name: Coverage summary
+        if: always()
+        env:
+          COVERAGE_MIN: "0.55"
+        run: |
+          if [ -d TestResults.xcresult ]; then
+            xcrun xccov view --report --json TestResults.xcresult > coverage-report.json
+            python3 - <<'PY'
+          import json
+          import os
+          import sys
+
+          min_cov = float(os.environ.get("COVERAGE_MIN", "0.55"))
+
+          with open("coverage-report.json", "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+          targets = data if isinstance(data, list) else data.get("targets", [])
+
+          total_exec = 0.0
+          total_covered = 0.0
+          for t in targets:
+            exec_lines = float(t.get("executableLines", 0) or 0)
+            line_cov = float(t.get("lineCoverage", 0) or 0)
+            total_exec += exec_lines
+            total_covered += exec_lines * line_cov
+
+          overall = (total_covered / total_exec) if total_exec > 0 else 0.0
+          print(f"Computed line coverage: {overall:.4f}")
+          print(f"Minimum required:       {min_cov:.4f}")
+
+          if overall < min_cov:
+            print("Coverage threshold not met.", file=sys.stderr)
+            sys.exit(1)
+          PY
+          fi
