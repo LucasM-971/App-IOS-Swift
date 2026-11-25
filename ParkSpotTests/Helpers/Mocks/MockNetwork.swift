@@ -1,4 +1,5 @@
 import XCTest
+@testable import ParkSpot
 
 final class MockNetwork: NetworkRequesting {
     var responses: [String: Any] = [:]

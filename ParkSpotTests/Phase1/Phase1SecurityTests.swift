@@ -1,4 +1,5 @@
 import XCTest
+@testable import ParkSpot
 
 final class Phase1SecurityTests: XCTestCase {
     func testAvailableAppLanguagesAreLimitedToCurrentProductLanguages() {

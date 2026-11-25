@@ -1,4 +1,5 @@
 import XCTest
+@testable import ParkSpot
 
 @MainActor
 final class Phase1AuthRepositoryTests: XCTestCase {

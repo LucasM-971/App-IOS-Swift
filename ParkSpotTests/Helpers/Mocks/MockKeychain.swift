@@ -1,4 +1,5 @@
 import XCTest
+@testable import ParkSpot
 
 final class MockKeychain: KeychainServiceProtocol {
     private var store: [KeychainKey: String] = [:]
